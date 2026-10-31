@@ -1,0 +1,2547 @@
+{
+  "report_type": "phase6_rigorous_validation",
+  "created_utc": "2026-10-28T15:46:41.705305+00:00",
+  "source_profiles": [
+    {
+      "dataset": "student-mat.csv",
+      "path": "C:\\Users\\Chalini\\Downloads\\AutoML_Student_Performance_App\\Student AutoML\\data\\raw\\student-mat.csv",
+      "sha256": "e47f9ee225e1ee6e69b7564e6dac7123e80b8486677fe111f351964cef5dec80",
+      "delimiter": ";",
+      "shape": [
+        395,
+        33
+      ],
+      "columns": [
+        "school",
+        "sex",
+        "age",
+        "address",
+        "famsize",
+        "Pstatus",
+        "Medu",
+        "Fedu",
+        "Mjob",
+        "Fjob",
+        "reason",
+        "guardian",
+        "traveltime",
+        "studytime",
+        "failures",
+        "schoolsup",
+        "famsup",
+        "paid",
+        "activities",
+        "nursery",
+        "higher",
+        "internet",
+        "romantic",
+        "famrel",
+        "freetime",
+        "goout",
+        "Dalc",
+        "Walc",
+        "health",
+        "absences",
+        "G1",
+        "G2",
+        "G3"
+      ],
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "target_available": true,
+      "g3_distribution": {
+        "0": 38,
+        "4": 1,
+        "5": 7,
+        "6": 15,
+        "7": 9,
+        "8": 32,
+        "9": 28,
+        "10": 56,
+        "11": 47,
+        "12": 31,
+        "13": 31,
+        "14": 27,
+        "15": 33,
+        "16": 16,
+        "17": 6,
+        "18": 12,
+        "19": 5,
+        "20": 1
+      },
+      "pass_fail_distribution": {
+        "Pass": 265,
+        "Fail": 130
+      },
+      "warnings": []
+    },
+    {
+      "dataset": "student-por.csv",
+      "path": "C:\\Users\\Chalini\\Downloads\\AutoML_Student_Performance_App\\Student AutoML\\data\\raw\\student-por.csv",
+      "sha256": "a7594a11d7771c0efe1a740824e0e833da9c4cad07c39a9766a874575563fb3f",
+      "delimiter": ";",
+      "shape": [
+        649,
+        33
+      ],
+      "columns": [
+        "school",
+        "sex",
+        "age",
+        "address",
+        "famsize",
+        "Pstatus",
+        "Medu",
+        "Fedu",
+        "Mjob",
+        "Fjob",
+        "reason",
+        "guardian",
+        "traveltime",
+        "studytime",
+        "failures",
+        "schoolsup",
+        "famsup",
+        "paid",
+        "activities",
+        "nursery",
+        "higher",
+        "internet",
+        "romantic",
+        "famrel",
+        "freetime",
+        "goout",
+        "Dalc",
+        "Walc",
+        "health",
+        "absences",
+        "G1",
+        "G2",
+        "G3"
+      ],
+      "missing_values": 0,
+      "duplicate_rows": 0,
+      "target_available": true,
+      "g3_distribution": {
+        "0": 15,
+        "1": 1,
+        "5": 1,
+        "6": 3,
+        "7": 10,
+        "8": 35,
+        "9": 35,
+        "10": 97,
+        "11": 104,
+        "12": 72,
+        "13": 82,
+        "14": 63,
+        "15": 49,
+        "16": 36,
+        "17": 29,
+        "18": 15,
+        "19": 2
+      },
+      "pass_fail_distribution": {
+        "Pass": 549,
+        "Fail": 100
+      },
+      "warnings": []
+    }
+  ],
+  "dataset_overlap": {
+    "method": "inner joins on shared pre-outcome student attributes",
+    "shared_attribute_columns": [
+      "school",
+      "sex",
+      "age",
+      "address",
+      "famsize",
+      "Pstatus",
+      "Medu",
+      "Fedu",
+      "Mjob",
+      "Fjob",
+      "reason",
+      "guardian",
+      "traveltime",
+      "studytime",
+      "failures",
+      "schoolsup",
+      "famsup",
+      "paid",
+      "activities",
+      "nursery",
+      "higher",
+      "internet",
+      "romantic",
+      "famrel",
+      "freetime",
+      "goout",
+      "Dalc",
+      "Walc",
+      "health",
+      "absences",
+      "G1",
+      "G2"
+    ],
+    "attribute_overlap_rows": 1,
+    "exact_shared_row_overlap": 0,
+    "note": "Overlap indicates possible repeated students, not identity; datasets should be analysed and held out separately rather than combining them as independent rows."
+  },
+  "experiments": [
+    {
+      "dataset": "student-mat.csv",
+      "task": "Classification",
+      "target": "G3",
+      "target_rule": "G3 >= 10 -> Pass; otherwise Fail",
+      "scenario": "early",
+      "excluded_features": [
+        "G1",
+        "G2"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "StratifiedKFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Majority baseline",
+          "cv_mean": 0.40150590724739904,
+          "cv_std_across_seeds": 0.0,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Logistic regression",
+          "cv_mean": 0.594586800567544,
+          "cv_std_across_seeds": 0.03960189621955075,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": 0.5529429708296332,
+          "cv_std_across_seeds": 0.015455180238277575,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Logistic regression",
+          "held_out_accuracy_mean": 0.6751054852320676,
+          "held_out_accuracy_std": 0.052700405049775516,
+          "held_out_balanced_accuracy_mean": 0.5782535074987906,
+          "held_out_balanced_accuracy_std": 0.06712757749220138,
+          "held_out_precision_macro_mean": 0.6078540826218845,
+          "held_out_precision_macro_std": 0.09477809444248247,
+          "held_out_recall_macro_mean": 0.5782535074987906,
+          "held_out_recall_macro_std": 0.06712757749220138,
+          "held_out_f1_macro_mean": 0.5743210733654781,
+          "held_out_f1_macro_std": 0.0831168931908071,
+          "held_out_f1_weighted_mean": 0.6448334674475406,
+          "held_out_f1_weighted_std": 0.06491864100684012,
+          "class_prevalence_supports": [
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            },
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            },
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            }
+          ]
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.683779761904762,
+              "cv_accuracy_std": 0.042719249245625215,
+              "cv_balanced_accuracy_mean": 0.6050055370985603,
+              "cv_balanced_accuracy_std": 0.06678801000862195,
+              "cv_precision_macro_mean": 0.6205361518679714,
+              "cv_precision_macro_std": 0.07418800074968647,
+              "cv_recall_macro_mean": 0.6050055370985603,
+              "cv_recall_macro_std": 0.06678801000862195,
+              "cv_f1_macro_mean": 0.6038352453023339,
+              "cv_f1_macro_std": 0.07607592381299796,
+              "cv_f1_weighted_mean": 0.6643455334635988,
+              "cv_f1_weighted_std": 0.057482261073485176
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.6834821428571429,
+              "cv_accuracy_std": 0.035254005997921514,
+              "cv_balanced_accuracy_mean": 0.5758637873754152,
+              "cv_balanced_accuracy_std": 0.036663372020259745,
+              "cv_precision_macro_mean": 0.6268728912596837,
+              "cv_precision_macro_std": 0.059489387458574926,
+              "cv_recall_macro_mean": 0.5758637873754152,
+              "cv_recall_macro_std": 0.036663372020259745,
+              "cv_f1_macro_mean": 0.5707087403065655,
+              "cv_f1_macro_std": 0.044242752755631526,
+              "cv_f1_weighted_mean": 0.6456602483989748,
+              "cv_f1_weighted_std": 0.03917414929230252
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.6582278481012658,
+            "balanced_accuracy": 0.5787373004354137,
+            "precision_macro": 0.5951754385964912,
+            "recall_macro": 0.5787373004354137,
+            "f1_macro": 0.5805309734513274,
+            "f1_weighted": 0.6422314327321608,
+            "confusion_matrix": [
+              [
+                9,
+                17
+              ],
+              [
+                10,
+                43
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.47368421052631576,
+                "recall": 0.34615384615384615,
+                "f1-score": 0.4,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.7166666666666667,
+                "recall": 0.8113207547169812,
+                "f1-score": 0.7610619469026548,
+                "support": 53.0
+              },
+              "accuracy": 0.6582278481012658,
+              "macro avg": {
+                "precision": 0.5951754385964912,
+                "recall": 0.5787373004354137,
+                "f1-score": 0.5805309734513274,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.6366977570508551,
+                "recall": 0.6582278481012658,
+                "f1-score": 0.6422314327321608,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Fail\n1     Fail\n2     Pass\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Pass\n77    Pass\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Pass\n1     Fail\n2     Pass\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.588534107402032
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.6456349206349208,
+              "cv_accuracy_std": 0.054113948995970745,
+              "cv_balanced_accuracy_mean": 0.5543853820598006,
+              "cv_balanced_accuracy_std": 0.06499401287500292,
+              "cv_precision_macro_mean": 0.5711809261593486,
+              "cv_precision_macro_std": 0.0779914175421165,
+              "cv_recall_macro_mean": 0.5543853820598006,
+              "cv_recall_macro_std": 0.06499401287500292,
+              "cv_f1_macro_mean": 0.5511790780141844,
+              "cv_f1_macro_std": 0.07108219223172385,
+              "cv_f1_weighted_mean": 0.6216299743892828,
+              "cv_f1_weighted_std": 0.056628201760689244
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.6709325396825396,
+              "cv_accuracy_std": 0.03334809291523873,
+              "cv_balanced_accuracy_mean": 0.5614341085271318,
+              "cv_balanced_accuracy_std": 0.053709884577174995,
+              "cv_precision_macro_mean": 0.5874921110635396,
+              "cv_precision_macro_std": 0.06957006194929578,
+              "cv_recall_macro_mean": 0.5614341085271318,
+              "cv_recall_macro_std": 0.053709884577174995,
+              "cv_f1_macro_mean": 0.5455248974670861,
+              "cv_f1_macro_std": 0.07566655567465007,
+              "cv_f1_weighted_mean": 0.626502992784974,
+              "cv_f1_weighted_std": 0.053798632551695064
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.7341772151898734,
+            "balanced_accuracy": 0.6451378809869376,
+            "precision_macro": 0.7083333333333333,
+            "recall_macro": 0.6451378809869376,
+            "f1_macro": 0.6541588492808005,
+            "f1_weighted": 0.7110140040056682,
+            "confusion_matrix": [
+              [
+                10,
+                16
+              ],
+              [
+                5,
+                48
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.6666666666666666,
+                "recall": 0.38461538461538464,
+                "f1-score": 0.4878048780487805,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.75,
+                "recall": 0.9056603773584906,
+                "f1-score": 0.8205128205128205,
+                "support": 53.0
+              },
+              "accuracy": 0.7341772151898734,
+              "macro avg": {
+                "precision": 0.7083333333333333,
+                "recall": 0.6451378809869376,
+                "f1-score": 0.6541588492808005,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.7225738396624471,
+                "recall": 0.7341772151898734,
+                "f1-score": 0.7110140040056682,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Pass\n1     Pass\n2     Pass\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Pass\n77    Pass\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Pass\n1     Pass\n2     Fail\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.6966618287373004
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.7055059523809524,
+              "cv_accuracy_std": 0.030886331899989863,
+              "cv_balanced_accuracy_mean": 0.6238870431893687,
+              "cv_balanced_accuracy_std": 0.026924823700963347,
+              "cv_precision_macro_mean": 0.6694532353509672,
+              "cv_precision_macro_std": 0.05680011887090013,
+              "cv_recall_macro_mean": 0.6238870431893687,
+              "cv_recall_macro_std": 0.026924823700963347,
+              "cv_f1_macro_mean": 0.6287460783861137,
+              "cv_f1_macro_std": 0.03132359399448064,
+              "cv_f1_weighted_mean": 0.6860669081461228,
+              "cv_f1_weighted_std": 0.027570349942430038
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.6740079365079364,
+              "cv_accuracy_std": 0.03146952998874101,
+              "cv_balanced_accuracy_mean": 0.5588870431893687,
+              "cv_balanced_accuracy_std": 0.036778549052416246,
+              "cv_precision_macro_mean": 0.621454806543553,
+              "cv_precision_macro_std": 0.058525198037024155,
+              "cv_recall_macro_mean": 0.5588870431893687,
+              "cv_recall_macro_std": 0.036778549052416246,
+              "cv_f1_macro_mean": 0.542595274715248,
+              "cv_f1_macro_std": 0.051195164666522644,
+              "cv_f1_weighted_mean": 0.625840404608532,
+              "cv_f1_weighted_std": 0.035647176788752025
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.6329113924050633,
+            "balanced_accuracy": 0.5108853410740204,
+            "precision_macro": 0.5200534759358288,
+            "recall_macro": 0.5108853410740204,
+            "f1_macro": 0.48827339736430647,
+            "f1_weighted": 0.581254965604793,
+            "confusion_matrix": [
+              [
+                4,
+                22
+              ],
+              [
+                7,
+                46
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.36363636363636365,
+                "recall": 0.15384615384615385,
+                "f1-score": 0.21621621621621623,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.6764705882352942,
+                "recall": 0.8679245283018868,
+                "f1-score": 0.7603305785123967,
+                "support": 53.0
+              },
+              "accuracy": 0.6329113924050633,
+              "macro avg": {
+                "precision": 0.5200534759358288,
+                "recall": 0.5108853410740204,
+                "f1-score": 0.48827339736430647,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.573512489000203,
+                "recall": 0.6329113924050633,
+                "f1-score": 0.581254965604793,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Pass\n1     Pass\n2     Fail\n3     Fail\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Pass\n77    Pass\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Fail\n1     Fail\n2     Fail\n3     Fail\n4     Pass\n      ... \n74    Fail\n75    Pass\n76    Pass\n77    Fail\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.6059506531204645
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-mat.csv",
+      "task": "Classification",
+      "target": "G3",
+      "target_rule": "G3 >= 10 -> Pass; otherwise Fail",
+      "scenario": "grade_assisted",
+      "excluded_features": [],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "StratifiedKFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Majority baseline",
+          "cv_mean": 0.40150590724739904,
+          "cv_std_across_seeds": 0.0,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Logistic regression",
+          "cv_mean": 0.8957115659005802,
+          "cv_std_across_seeds": 0.02190828278081726,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": 0.8115538731775035,
+          "cv_std_across_seeds": 0.02247046841914832,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Logistic regression",
+          "held_out_accuracy_mean": 0.9071729957805906,
+          "held_out_accuracy_std": 0.0318558414990327,
+          "held_out_balanced_accuracy_mean": 0.8948959845186261,
+          "held_out_balanced_accuracy_std": 0.01624447803888139,
+          "held_out_precision_macro_mean": 0.9027162900312762,
+          "held_out_precision_macro_std": 0.04511489916742436,
+          "held_out_recall_macro_mean": 0.8948959845186261,
+          "held_out_recall_macro_std": 0.01624447803888139,
+          "held_out_f1_macro_mean": 0.895432750765602,
+          "held_out_f1_macro_std": 0.031138098390775373,
+          "held_out_f1_weighted_mean": 0.9072364221738978,
+          "held_out_f1_weighted_std": 0.02982665686905341,
+          "class_prevalence_supports": [
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            },
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            },
+            {
+              "Fail": 26.0,
+              "Pass": 53.0
+            }
+          ]
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.9176587301587302,
+              "cv_accuracy_std": 0.03249367634275281,
+              "cv_balanced_accuracy_mean": 0.9040310077519381,
+              "cv_balanced_accuracy_std": 0.034383240268339665,
+              "cv_precision_macro_mean": 0.9103168402207835,
+              "cv_precision_macro_std": 0.04066166551889923,
+              "cv_recall_macro_mean": 0.9040310077519381,
+              "cv_recall_macro_std": 0.034383240268339665,
+              "cv_f1_macro_mean": 0.9063669254092277,
+              "cv_f1_macro_std": 0.036581592597147425,
+              "cv_f1_weighted_mean": 0.9174896374601571,
+              "cv_f1_weighted_std": 0.03240422088361774
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8479662698412698,
+              "cv_accuracy_std": 0.05669059132694543,
+              "cv_balanced_accuracy_mean": 0.7980232558139534,
+              "cv_balanced_accuracy_std": 0.06170420404885674,
+              "cv_precision_macro_mean": 0.8522324504269794,
+              "cv_precision_macro_std": 0.07969577163823065,
+              "cv_recall_macro_mean": 0.7980232558139534,
+              "cv_recall_macro_std": 0.06170420404885674,
+              "cv_f1_macro_mean": 0.8158793628950247,
+              "cv_f1_macro_std": 0.06708252413948454,
+              "cv_f1_weighted_mean": 0.8422395101457913,
+              "cv_f1_weighted_std": 0.05779233361436255
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.8734177215189873,
+            "balanced_accuracy": 0.886066763425254,
+            "precision_macro": 0.8537234042553192,
+            "recall_macro": 0.886066763425254,
+            "f1_macro": 0.8637931034482759,
+            "f1_weighted": 0.8761676123963336,
+            "confusion_matrix": [
+              [
+                24,
+                2
+              ],
+              [
+                8,
+                45
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.75,
+                "recall": 0.9230769230769231,
+                "f1-score": 0.8275862068965517,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.9574468085106383,
+                "recall": 0.8490566037735849,
+                "f1-score": 0.9,
+                "support": 53.0
+              },
+              "accuracy": 0.8734177215189873,
+              "macro avg": {
+                "precision": 0.8537234042553192,
+                "recall": 0.886066763425254,
+                "f1-score": 0.8637931034482759,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.8891731753299219,
+                "recall": 0.8734177215189873,
+                "f1-score": 0.8761676123963336,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Pass\n1     Fail\n2     Pass\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Pass\n1     Fail\n2     Pass\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.9484760522496373
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.8859623015873016,
+              "cv_accuracy_std": 0.023702014219895352,
+              "cv_balanced_accuracy_mean": 0.8705703211517164,
+              "cv_balanced_accuracy_std": 0.029066603213327987,
+              "cv_precision_macro_mean": 0.8729207108680793,
+              "cv_precision_macro_std": 0.027986067109555902,
+              "cv_recall_macro_mean": 0.8705703211517164,
+              "cv_recall_macro_std": 0.029066603213327987,
+              "cv_f1_macro_mean": 0.8705137995910761,
+              "cv_f1_macro_std": 0.027721470664439304,
+              "cv_f1_weighted_mean": 0.8857891353568073,
+              "cv_f1_weighted_std": 0.023764316168308295
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8226190476190476,
+              "cv_accuracy_std": 0.03300098870839966,
+              "cv_balanced_accuracy_mean": 0.7769269102990034,
+              "cv_balanced_accuracy_std": 0.04933000952040358,
+              "cv_precision_macro_mean": 0.8107771733055049,
+              "cv_precision_macro_std": 0.0385875699267879,
+              "cv_recall_macro_mean": 0.7769269102990034,
+              "cv_recall_macro_std": 0.04933000952040358,
+              "cv_f1_macro_mean": 0.7872351008091991,
+              "cv_f1_macro_std": 0.04485018815245288,
+              "cv_f1_weighted_mean": 0.8168533319981135,
+              "cv_f1_weighted_std": 0.03601818318796538
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.9367088607594937,
+            "balanced_accuracy": 0.9136429608127721,
+            "precision_macro": 0.9425465838509317,
+            "recall_macro": 0.9136429608127721,
+            "f1_macro": 0.926043812020221,
+            "f1_weighted": 0.9356423558855664,
+            "confusion_matrix": [
+              [
+                22,
+                4
+              ],
+              [
+                1,
+                52
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.9565217391304348,
+                "recall": 0.8461538461538461,
+                "f1-score": 0.8979591836734694,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.9285714285714286,
+                "recall": 0.9811320754716981,
+                "f1-score": 0.9541284403669725,
+                "support": 53.0
+              },
+              "accuracy": 0.9367088607594937,
+              "macro avg": {
+                "precision": 0.9425465838509317,
+                "recall": 0.9136429608127721,
+                "f1-score": 0.926043812020221,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.9377702649579369,
+                "recall": 0.9367088607594937,
+                "f1-score": 0.9356423558855664,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Pass\n1     Pass\n2     Fail\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Pass\n1     Pass\n2     Fail\n3     Pass\n4     Pass\n      ... \n74    Pass\n75    Pass\n76    Fail\n77    Pass\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.9862119013062409
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.6708829365079364,
+              "cv_accuracy_std": 0.006167571842210162,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.3354414682539682,
+              "cv_precision_macro_std": 0.003083785921105081,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.40150590724739904,
+              "cv_f1_macro_std": 0.0021997656040933346,
+              "cv_f1_weighted_mean": 0.5387540585210748,
+              "cv_f1_weighted_std": 0.00793562824315135
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.9209325396825397,
+              "cv_accuracy_std": 0.02823392480602245,
+              "cv_balanced_accuracy_mean": 0.9091417497231451,
+              "cv_balanced_accuracy_std": 0.029976382919332,
+              "cv_precision_macro_mean": 0.912037709133867,
+              "cv_precision_macro_std": 0.034261431671049475,
+              "cv_recall_macro_mean": 0.9091417497231451,
+              "cv_recall_macro_std": 0.029976382919332,
+              "cv_f1_macro_mean": 0.9102539727014369,
+              "cv_f1_macro_std": 0.031670115083974486,
+              "cv_f1_weighted_mean": 0.9208872644509378,
+              "cv_f1_weighted_std": 0.02800185510325227
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8606646825396826,
+              "cv_accuracy_std": 0.021535091289347136,
+              "cv_balanced_accuracy_mean": 0.8183720930232559,
+              "cv_balanced_accuracy_std": 0.03948949688846636,
+              "cv_precision_macro_mean": 0.8680537399046662,
+              "cv_precision_macro_std": 0.023970452988245163,
+              "cv_recall_macro_mean": 0.8183720930232559,
+              "cv_recall_macro_std": 0.03948949688846636,
+              "cv_f1_macro_mean": 0.8315471558282864,
+              "cv_f1_macro_std": 0.03227140342733577,
+              "cv_f1_weighted_mean": 0.8551172740328123,
+              "cv_f1_weighted_std": 0.0259809757505842
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.9113924050632911,
+            "balanced_accuracy": 0.884978229317852,
+            "precision_macro": 0.9118788819875776,
+            "recall_macro": 0.884978229317852,
+            "f1_macro": 0.8964613368283093,
+            "f1_weighted": 0.9098992982397931,
+            "confusion_matrix": [
+              [
+                21,
+                5
+              ],
+              [
+                2,
+                51
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.9130434782608695,
+                "recall": 0.8076923076923077,
+                "f1-score": 0.8571428571428571,
+                "support": 26.0
+              },
+              "Pass": {
+                "precision": 0.9107142857142857,
+                "recall": 0.9622641509433962,
+                "f1-score": 0.9357798165137615,
+                "support": 53.0
+              },
+              "accuracy": 0.9113924050632911,
+              "macro avg": {
+                "precision": 0.9118788819875776,
+                "recall": 0.884978229317852,
+                "f1-score": 0.8964613368283093,
+                "support": 79.0
+              },
+              "weighted avg": {
+                "precision": 0.9114808554131614,
+                "recall": 0.9113924050632911,
+                "f1-score": 0.9098992982397931,
+                "support": 79.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0     Fail\n1     Fail\n2     Fail\n3     Fail\n4     Pass\n      ... \n74    Fail\n75    Pass\n76    Pass\n77    Fail\n78    Pass\nLength: 79, dtype: str",
+            "actual": "0     Fail\n1     Fail\n2     Fail\n3     Fail\n4     Pass\n      ... \n74    Fail\n75    Pass\n76    Pass\n77    Fail\n78    Pass\nName: G3, Length: 79, dtype: str",
+            "roc_auc": 0.9716981132075472
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-mat.csv",
+      "task": "Regression",
+      "target": "G3",
+      "target_rule": null,
+      "scenario": "early",
+      "excluded_features": [
+        "G1",
+        "G2"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "KFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Mean baseline",
+          "cv_mean": -3.4777919921262312,
+          "cv_std_across_seeds": 0.11163963611504144,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Linear regression",
+          "cv_mean": -3.5538327034155786,
+          "cv_std_across_seeds": 0.07066498174160378,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": -3.3788785062685043,
+          "cv_std_across_seeds": 0.023895627515071217,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Linear regression",
+          "held_out_mae_mean": 3.3348256055496037,
+          "held_out_mae_std": 0.3000693646457667,
+          "held_out_rmse_mean": 4.257494864217837,
+          "held_out_rmse_std": 0.36136136654079565,
+          "held_out_r2_mean": 0.0302039731331869,
+          "held_out_r2_std": 0.11237606703352443
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Linear regression",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.4028651224982744,
+              "cv_mae_std": 0.6293192137033018,
+              "cv_rmse_mean": -4.563457898973525,
+              "cv_rmse_std": 0.6338087902708667,
+              "cv_r2_mean": -0.03502320134255514,
+              "cv_r2_std": 0.04712880701232595
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -3.522676718762832,
+              "cv_mae_std": 0.38186282564015583,
+              "cv_rmse_mean": -4.607035358217457,
+              "cv_rmse_std": 0.32705172856015313,
+              "cv_r2_mean": -0.09238794106516238,
+              "cv_r2_std": 0.2233214732532735
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -3.3800354464842455,
+              "cv_mae_std": 0.3242816594918417,
+              "cv_rmse_mean": -4.607535065294816,
+              "cv_rmse_std": 0.38672254030291925,
+              "cv_r2_mean": -0.09034371178414899,
+              "cv_r2_std": 0.22316134497185283
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 3.39526092580192,
+            "rmse": 4.1956808027213786,
+            "r2": 0.14149247411195787,
+            "actual": "0     10\n1     12\n2      5\n3     10\n4      9\n      ..\n74    12\n75     6\n76     9\n77    15\n78     5\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0      1.885080\n1      7.453392\n2      8.308688\n3     11.551124\n4     10.202845\n        ...    \n74     9.244612\n75    13.247292\n76    13.680737\n77    11.339739\n78     5.720151\nLength: 79, dtype: float64",
+            "residuals": "0     8.114920\n1     4.546608\n2    -3.308688\n3    -1.551124\n4    -1.202845\n        ...   \n74    2.755388\n75   -7.247292\n76   -4.680737\n77    3.660261\n78   -0.720151\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Linear regression",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.6061007983562328,
+              "cv_mae_std": 0.3185271543994671,
+              "cv_rmse_mean": -4.744316472533946,
+              "cv_rmse_std": 0.41957548057012684,
+              "cv_r2_mean": -0.02136287878300074,
+              "cv_r2_std": 0.026578945394218602
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -3.634721629817186,
+              "cv_mae_std": 0.4098548039450431,
+              "cv_rmse_mean": -4.674464827999418,
+              "cv_rmse_std": 0.4836720129284481,
+              "cv_r2_mean": 0.00017087262707351502,
+              "cv_r2_std": 0.1468682001588518
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -3.354425423465514,
+              "cv_mae_std": 0.34047781258686666,
+              "cv_rmse_mean": -4.424362971565676,
+              "cv_rmse_std": 0.5723315722503585,
+              "cv_r2_mean": 0.11205300303121664,
+              "cv_r2_std": 0.12333215683625473
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 3.009138314753195,
+            "rmse": 3.9310277162972436,
+            "r2": -0.08322896659852996,
+            "actual": "0     14\n1      8\n2      0\n3     10\n4     10\n      ..\n74    18\n75    15\n76    11\n77    12\n78     0\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0     11.457126\n1     12.448016\n2     10.229446\n3     12.224977\n4      9.484975\n        ...    \n74    10.162225\n75    10.945394\n76    11.463258\n77     7.383341\n78    11.506278\nLength: 79, dtype: float64",
+            "residuals": "0      2.542874\n1     -4.448016\n2    -10.229446\n3     -2.224977\n4      0.515025\n        ...    \n74     7.837775\n75     4.054606\n76    -0.463258\n77     4.616659\n78   -11.506278\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Linear regression",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.4244100555241856,
+              "cv_mae_std": 0.5060243923404009,
+              "cv_rmse_mean": -4.5189142629065255,
+              "cv_rmse_std": 0.5228283188653974,
+              "cv_r2_mean": -0.013385525756038862,
+              "cv_r2_std": 0.0141294228957403
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -3.5040997616667178,
+              "cv_mae_std": 0.4477317533252202,
+              "cv_rmse_mean": -4.583228712520244,
+              "cv_rmse_std": 0.5105050317813924,
+              "cv_r2_mean": -0.06903845478747064,
+              "cv_r2_std": 0.23650966546545918
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -3.402174648855752,
+              "cv_mae_std": 0.44059709857839247,
+              "cv_rmse_mean": -4.496928417031901,
+              "cv_rmse_std": 0.40183865233070853,
+              "cv_r2_mean": -0.026289447819842014,
+              "cv_r2_std": 0.201761366861379
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 3.6000775760936956,
+            "rmse": 4.645776073634888,
+            "r2": 0.0323484118861328,
+            "actual": "0     10\n1     10\n2     13\n3     14\n4     18\n      ..\n74    10\n75    12\n76    15\n77    11\n78    18\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0      1.291691\n1     -0.772900\n2     12.219050\n3     12.611756\n4     13.997280\n        ...    \n74    11.527787\n75     8.077329\n76    14.199614\n77    11.080172\n78    12.259143\nLength: 79, dtype: float64",
+            "residuals": "0      8.708309\n1     10.772900\n2      0.780950\n3      1.388244\n4      4.002720\n        ...    \n74    -1.527787\n75     3.922671\n76     0.800386\n77    -0.080172\n78     5.740857\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-mat.csv",
+      "task": "Regression",
+      "target": "G3",
+      "target_rule": null,
+      "scenario": "grade_assisted",
+      "excluded_features": [],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "KFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Mean baseline",
+          "cv_mean": -3.4777919921262312,
+          "cv_std_across_seeds": 0.11163963611504144,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Linear regression",
+          "cv_mean": -1.4746090957830746,
+          "cv_std_across_seeds": 0.07366698394302085,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": -1.1442912830963154,
+          "cv_std_across_seeds": 0.13292214989819812,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Mean baseline",
+          "held_out_mae_mean": 3.3360038455375753,
+          "held_out_mae_std": 0.42932977612651435,
+          "held_out_rmse_mean": 4.37528356625506,
+          "held_out_rmse_std": 0.46886698119810954,
+          "held_out_r2_mean": -0.016427581298719574,
+          "held_out_r2_std": 0.01708934911182605
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.4028651224982744,
+              "cv_mae_std": 0.6293192137033018,
+              "cv_rmse_mean": -4.563457898973525,
+              "cv_rmse_std": 0.6338087902708667,
+              "cv_r2_mean": -0.03502320134255514,
+              "cv_r2_std": 0.04712880701232595
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -1.392734456225702,
+              "cv_mae_std": 0.23040556627030734,
+              "cv_rmse_mean": -1.986946639832322,
+              "cv_rmse_std": 0.36106934654167866,
+              "cv_r2_mean": 0.8038522286610302,
+              "cv_r2_std": 0.03167539726689187
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -1.0447713732692563,
+              "cv_mae_std": 0.19772551135899682,
+              "cv_rmse_mean": -1.6009939644153703,
+              "cv_rmse_std": 0.4338117966703689,
+              "cv_r2_mean": 0.8724641500885258,
+              "cv_r2_std": 0.04169971128612286
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 3.64585002403461,
+            "rmse": 4.550180652162387,
+            "r2": -0.009709643515769084,
+            "actual": "0     10\n1     12\n2      5\n3     10\n4      9\n      ..\n74    12\n75     6\n76     9\n77    15\n78     5\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0     10.325949\n1     10.325949\n2     10.325949\n3     10.325949\n4     10.325949\n        ...    \n74    10.325949\n75    10.325949\n76    10.325949\n77    10.325949\n78    10.325949\nLength: 79, dtype: float64",
+            "residuals": "0    -0.325949\n1     1.674051\n2    -5.325949\n3    -0.325949\n4    -1.325949\n        ...   \n74    1.674051\n75   -4.325949\n76   -1.325949\n77    4.674051\n78   -5.325949\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.6061007983562328,
+              "cv_mae_std": 0.3185271543994671,
+              "cv_rmse_mean": -4.744316472533946,
+              "cv_rmse_std": 0.41957548057012684,
+              "cv_r2_mean": -0.02136287878300074,
+              "cv_r2_std": 0.026578945394218602
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -1.5355272081204665,
+              "cv_mae_std": 0.14264969282608767,
+              "cv_rmse_mean": -2.2054885190099354,
+              "cv_rmse_std": 0.1347643702205896,
+              "cv_r2_mean": 0.7775663034313747,
+              "cv_r2_std": 0.01880407323371494
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -1.2952448079368397,
+              "cv_mae_std": 0.1831349569757762,
+              "cv_rmse_mean": -1.9670983950355023,
+              "cv_rmse_std": 0.2104757587551598,
+              "cv_r2_mean": 0.8194577506153878,
+              "cv_r2_std": 0.0437656248421781
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.8459381509373496,
+            "rmse": 3.8441070626501976,
+            "r2": -0.035855085811842935,
+            "actual": "0     14\n1      8\n2      0\n3     10\n4     10\n      ..\n74    18\n75    15\n76    11\n77    12\n78     0\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0     10.272152\n1     10.272152\n2     10.272152\n3     10.272152\n4     10.272152\n        ...    \n74    10.272152\n75    10.272152\n76    10.272152\n77    10.272152\n78    10.272152\nLength: 79, dtype: float64",
+            "residuals": "0      3.727848\n1     -2.272152\n2    -10.272152\n3     -0.272152\n4     -0.272152\n        ...    \n74     7.727848\n75     4.727848\n76     0.727848\n77     1.727848\n78   -10.272152\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 316,
+          "test_rows": 79,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -3.4244100555241856,
+              "cv_mae_std": 0.5060243923404009,
+              "cv_rmse_mean": -4.5189142629065255,
+              "cv_rmse_std": 0.5228283188653974,
+              "cv_r2_mean": -0.013385525756038862,
+              "cv_r2_std": 0.0141294228957403
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -1.4955656230030556,
+              "cv_mae_std": 0.0923232779478032,
+              "cv_rmse_mean": -2.2138824590562085,
+              "cv_rmse_std": 0.221487342595507,
+              "cv_r2_mean": 0.7449974846113572,
+              "cv_r2_std": 0.0736961251445156
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -1.0928576680828503,
+              "cv_mae_std": 0.15381610789772432,
+              "cv_rmse_mean": -1.718492705808293,
+              "cv_rmse_std": 0.3353147687624915,
+              "cv_r2_mean": 0.8380508064079095,
+              "cv_r2_std": 0.0801013043703636
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 3.516223361640765,
+            "rmse": 4.731562983952596,
+            "r2": -0.0037180145685467014,
+            "actual": "0     10\n1     10\n2     13\n3     14\n4     18\n      ..\n74    10\n75    12\n76    15\n77    11\n78    18\nName: G3, Length: 79, dtype: int64",
+            "predictions": "0     10.357595\n1     10.357595\n2     10.357595\n3     10.357595\n4     10.357595\n        ...    \n74    10.357595\n75    10.357595\n76    10.357595\n77    10.357595\n78    10.357595\nLength: 79, dtype: float64",
+            "residuals": "0    -0.357595\n1    -0.357595\n2     2.642405\n3     3.642405\n4     7.642405\n        ...   \n74   -0.357595\n75    1.642405\n76    4.642405\n77    0.642405\n78    7.642405\nLength: 79, dtype: float64"
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-por.csv",
+      "task": "Classification",
+      "target": "G3",
+      "target_rule": "G3 >= 10 -> Pass; otherwise Fail",
+      "scenario": "early",
+      "excluded_features": [
+        "G1",
+        "G2"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "StratifiedKFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Majority baseline",
+          "cv_mean": 0.45824561403508773,
+          "cv_std_across_seeds": 0.0,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Logistic regression",
+          "cv_mean": 0.6538951899652194,
+          "cv_std_across_seeds": 0.036140770839730336,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": 0.6338307158515742,
+          "cv_std_across_seeds": 0.03553521603772176,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Logistic regression",
+          "held_out_accuracy_mean": 0.817948717948718,
+          "held_out_accuracy_std": 0.023500388179260746,
+          "held_out_balanced_accuracy_mean": 0.5787878787878787,
+          "held_out_balanced_accuracy_std": 0.01644131395015958,
+          "held_out_precision_macro_mean": 0.6198419834546852,
+          "held_out_precision_macro_std": 0.04202691278966837,
+          "held_out_recall_macro_mean": 0.5787878787878787,
+          "held_out_recall_macro_std": 0.01644131395015958,
+          "held_out_f1_macro_mean": 0.5896165767309116,
+          "held_out_f1_macro_std": 0.02246187314604676,
+          "held_out_f1_weighted_mean": 0.8014475687229444,
+          "held_out_f1_weighted_std": 0.016458558986086207,
+          "class_prevalence_supports": [
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            },
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            },
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            }
+          ]
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.8612770724421208,
+              "cv_accuracy_std": 0.02154620484083508,
+              "cv_balanced_accuracy_mean": 0.6675613897596657,
+              "cv_balanced_accuracy_std": 0.049110611847364406,
+              "cv_precision_macro_mean": 0.7338342286087487,
+              "cv_precision_macro_std": 0.051468587176585874,
+              "cv_recall_macro_mean": 0.6675613897596657,
+              "cv_recall_macro_std": 0.049110611847364406,
+              "cv_f1_macro_mean": 0.6902788853610105,
+              "cv_f1_macro_std": 0.05054386946826961,
+              "cv_f1_weighted_mean": 0.8494391870067688,
+              "cv_f1_weighted_std": 0.023809225401283433
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8651418969380135,
+              "cv_accuracy_std": 0.01032059746840079,
+              "cv_balanced_accuracy_mean": 0.6289642110762801,
+              "cv_balanced_accuracy_std": 0.029886491763686806,
+              "cv_precision_macro_mean": 0.764981529955698,
+              "cv_precision_macro_std": 0.05242090966083698,
+              "cv_recall_macro_mean": 0.6289642110762801,
+              "cv_recall_macro_std": 0.029886491763686806,
+              "cv_f1_macro_mean": 0.6587095311218734,
+              "cv_f1_macro_std": 0.03492913539659693,
+              "cv_f1_weighted_mean": 0.8422674774974173,
+              "cv_f1_weighted_std": 0.013914180937911838
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.7923076923076923,
+            "balanced_accuracy": 0.5704545454545454,
+            "precision_macro": 0.5806871421134826,
+            "recall_macro": 0.5704545454545454,
+            "f1_macro": 0.5745970185432069,
+            "f1_weighted": 0.7852847673475476,
+            "confusion_matrix": [
+              [
+                5,
+                15
+              ],
+              [
+                12,
+                98
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.29411764705882354,
+                "recall": 0.25,
+                "f1-score": 0.2702702702702703,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.8672566371681416,
+                "recall": 0.8909090909090909,
+                "f1-score": 0.8789237668161435,
+                "support": 110.0
+              },
+              "accuracy": 0.7923076923076923,
+              "macro avg": {
+                "precision": 0.5806871421134826,
+                "recall": 0.5704545454545454,
+                "f1-score": 0.5745970185432069,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.7790814079205541,
+                "recall": 0.7923076923076923,
+                "f1-score": 0.7852847673475476,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Fail\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Pass\nLength: 130, dtype: str",
+            "actual": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Fail\n127    Pass\n128    Pass\n129    Pass\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.6227272727272728
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.8400858849887977,
+              "cv_accuracy_std": 0.028208627018385078,
+              "cv_balanced_accuracy_mean": 0.6090125391849531,
+              "cv_balanced_accuracy_std": 0.08610262377867538,
+              "cv_precision_macro_mean": 0.6430765930158854,
+              "cv_precision_macro_std": 0.12430285777080816,
+              "cv_recall_macro_mean": 0.6090125391849531,
+              "cv_recall_macro_std": 0.08610262377867538,
+              "cv_f1_macro_mean": 0.6180023437390029,
+              "cv_f1_macro_std": 0.10363424681457248,
+              "cv_f1_weighted_mean": 0.8193749083140378,
+              "cv_f1_weighted_std": 0.041830553286867814
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8497386109036593,
+              "cv_accuracy_std": 0.01761470672168533,
+              "cv_balanced_accuracy_mean": 0.5789772727272727,
+              "cv_balanced_accuracy_std": 0.04203777571157708,
+              "cv_precision_macro_mean": 0.7344637068970055,
+              "cv_precision_macro_std": 0.1347760123418618,
+              "cv_recall_macro_mean": 0.5789772727272727,
+              "cv_recall_macro_std": 0.04203777571157708,
+              "cv_f1_macro_mean": 0.5931329467652133,
+              "cv_f1_macro_std": 0.05527564079964124,
+              "cv_f1_weighted_mean": 0.8165203813560584,
+              "cv_f1_weighted_std": 0.02204923657515309
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.8384615384615385,
+            "balanced_accuracy": 0.5977272727272727,
+            "precision_macro": 0.6642475171886937,
+            "recall_macro": 0.5977272727272727,
+            "f1_macro": 0.6154387941963657,
+            "f1_weighted": 0.8181867435283409,
+            "confusion_matrix": [
+              [
+                5,
+                15
+              ],
+              [
+                6,
+                104
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.45454545454545453,
+                "recall": 0.25,
+                "f1-score": 0.3225806451612903,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.8739495798319328,
+                "recall": 0.9454545454545454,
+                "f1-score": 0.9082969432314411,
+                "support": 110.0
+              },
+              "accuracy": 0.8384615384615385,
+              "macro avg": {
+                "precision": 0.6642475171886937,
+                "recall": 0.5977272727272727,
+                "f1-score": 0.6154387941963657,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.8094258682493977,
+                "recall": 0.8384615384615385,
+                "f1-score": 0.8181867435283409,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Fail\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Pass\nLength: 130, dtype: str",
+            "actual": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Fail\n128    Pass\n129    Fail\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.7909090909090909
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.855470500373413,
+              "cv_accuracy_std": 0.008947975846142542,
+              "cv_balanced_accuracy_mean": 0.6283437826541275,
+              "cv_balanced_accuracy_std": 0.022543881768171,
+              "cv_precision_macro_mean": 0.7208471349273174,
+              "cv_precision_macro_std": 0.027838824587174217,
+              "cv_recall_macro_mean": 0.6283437826541275,
+              "cv_recall_macro_std": 0.022543881768171,
+              "cv_f1_macro_mean": 0.6534043407956451,
+              "cv_f1_macro_std": 0.02507417922066608,
+              "cv_f1_weighted_mean": 0.8364374595621147,
+              "cv_f1_weighted_std": 0.010688808886547111
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8631814787154592,
+              "cv_accuracy_std": 0.011417617540189854,
+              "cv_balanced_accuracy_mean": 0.6226880877742947,
+              "cv_balanced_accuracy_std": 0.036459414135299,
+              "cv_precision_macro_mean": 0.7728339917714637,
+              "cv_precision_macro_std": 0.083894610782239,
+              "cv_recall_macro_mean": 0.6226880877742947,
+              "cv_recall_macro_std": 0.036459414135299,
+              "cv_f1_macro_mean": 0.6496496696676359,
+              "cv_f1_macro_std": 0.03704442617104951,
+              "cv_f1_weighted_mean": 0.8387399008005858,
+              "cv_f1_weighted_std": 0.014028503980562919
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.823076923076923,
+            "balanced_accuracy": 0.5681818181818182,
+            "precision_macro": 0.6145912910618794,
+            "recall_macro": 0.5681818181818182,
+            "f1_macro": 0.5788139174531624,
+            "f1_weighted": 0.8008711952929448,
+            "confusion_matrix": [
+              [
+                4,
+                16
+              ],
+              [
+                7,
+                103
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.36363636363636365,
+                "recall": 0.2,
+                "f1-score": 0.25806451612903225,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.865546218487395,
+                "recall": 0.9363636363636364,
+                "f1-score": 0.8995633187772926,
+                "support": 110.0
+              },
+              "accuracy": 0.823076923076923,
+              "macro avg": {
+                "precision": 0.6145912910618794,
+                "recall": 0.5681818181818182,
+                "f1-score": 0.5788139174531624,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.7883293177410825,
+                "recall": 0.823076923076923,
+                "f1-score": 0.8008711952929448,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Pass\n3      Fail\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Pass\nLength: 130, dtype: str",
+            "actual": "0      Fail\n1      Pass\n2      Pass\n3      Fail\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Fail\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.740909090909091
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-por.csv",
+      "task": "Classification",
+      "target": "G3",
+      "target_rule": "G3 >= 10 -> Pass; otherwise Fail",
+      "scenario": "grade_assisted",
+      "excluded_features": [],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "StratifiedKFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Majority baseline",
+          "cv_mean": 0.45824561403508773,
+          "cv_std_across_seeds": 0.0,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Logistic regression",
+          "cv_mean": 0.849223561294607,
+          "cv_std_across_seeds": 0.02398950698598209,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": 0.7307335650782769,
+          "cv_std_across_seeds": 0.031146649211403154,
+          "selection_metric": "cv_f1_macro_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Logistic regression",
+          "held_out_accuracy_mean": 0.923076923076923,
+          "held_out_accuracy_std": 0.015384615384615385,
+          "held_out_balanced_accuracy_mean": 0.8386363636363637,
+          "held_out_balanced_accuracy_std": 0.03782572040248462,
+          "held_out_precision_macro_mean": 0.8600312333864966,
+          "held_out_precision_macro_std": 0.03245792870239421,
+          "held_out_recall_macro_mean": 0.8386363636363637,
+          "held_out_recall_macro_std": 0.03782572040248462,
+          "held_out_f1_macro_mean": 0.8477783790283789,
+          "held_out_f1_macro_std": 0.030553745805088267,
+          "held_out_f1_weighted_mean": 0.9218813593813594,
+          "held_out_f1_weighted_std": 0.015523353638405395,
+          "class_prevalence_supports": [
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            },
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            },
+            {
+              "Fail": 20.0,
+              "Pass": 110.0
+            }
+          ]
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.9345407020164302,
+              "cv_accuracy_std": 0.026009119785769003,
+              "cv_balanced_accuracy_mean": 0.8488375130616511,
+              "cv_balanced_accuracy_std": 0.06473658957126294,
+              "cv_precision_macro_mean": 0.8970101876502194,
+              "cv_precision_macro_std": 0.064112532783582,
+              "cv_recall_macro_mean": 0.8488375130616511,
+              "cv_recall_macro_std": 0.06473658957126294,
+              "cv_f1_macro_mean": 0.86622871057045,
+              "cv_f1_macro_std": 0.053784862828677144,
+              "cv_f1_weighted_mean": 0.9323370331792,
+              "cv_f1_weighted_std": 0.02688002993917241
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.9036967886482451,
+              "cv_accuracy_std": 0.01026114857641812,
+              "cv_balanced_accuracy_mean": 0.7181818181818181,
+              "cv_balanced_accuracy_std": 0.05334256010924359,
+              "cv_precision_macro_mean": 0.9056079916102313,
+              "cv_precision_macro_std": 0.05433402756381477,
+              "cv_recall_macro_mean": 0.7181818181818181,
+              "cv_recall_macro_std": 0.05334256010924359,
+              "cv_f1_macro_mean": 0.7628370968093373,
+              "cv_f1_macro_std": 0.04543061326888796,
+              "cv_f1_weighted_mean": 0.8891780240406806,
+              "cv_f1_weighted_std": 0.01681886095994935
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.9076923076923077,
+            "balanced_accuracy": 0.8227272727272728,
+            "precision_macro": 0.8227272727272728,
+            "recall_macro": 0.8227272727272728,
+            "f1_macro": 0.8227272727272728,
+            "f1_weighted": 0.9076923076923077,
+            "confusion_matrix": [
+              [
+                14,
+                6
+              ],
+              [
+                6,
+                104
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.7,
+                "recall": 0.7,
+                "f1-score": 0.7,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.9454545454545454,
+                "recall": 0.9454545454545454,
+                "f1-score": 0.9454545454545454,
+                "support": 110.0
+              },
+              "accuracy": 0.9076923076923077,
+              "macro avg": {
+                "precision": 0.8227272727272728,
+                "recall": 0.8227272727272728,
+                "f1-score": 0.8227272727272728,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.9076923076923077,
+                "recall": 0.9076923076923077,
+                "f1-score": 0.9076923076923077,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Fail\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Pass\nLength: 130, dtype: str",
+            "actual": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Fail\n127    Pass\n128    Pass\n129    Pass\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.9272727272727272
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.915216579536968,
+              "cv_accuracy_std": 0.009461322970695157,
+              "cv_balanced_accuracy_mean": 0.7965647857889236,
+              "cv_balanced_accuracy_std": 0.03239299321411109,
+              "cv_precision_macro_mean": 0.8590979793328628,
+              "cv_precision_macro_std": 0.019677212491437616,
+              "cv_recall_macro_mean": 0.7965647857889236,
+              "cv_recall_macro_std": 0.03239299321411109,
+              "cv_f1_macro_mean": 0.8217838506797166,
+              "cv_f1_macro_std": 0.023296709532241645,
+              "cv_f1_weighted_mean": 0.9110167522048268,
+              "cv_f1_weighted_std": 0.010743402838940545
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8805451829723674,
+              "cv_accuracy_std": 0.015574343816243038,
+              "cv_balanced_accuracy_mean": 0.6636363636363637,
+              "cv_balanced_accuracy_std": 0.04565297596954698,
+              "cv_precision_macro_mean": 0.8248635569136805,
+              "cv_precision_macro_std": 0.07257400381314909,
+              "cv_recall_macro_mean": 0.6636363636363637,
+              "cv_recall_macro_std": 0.04565297596954698,
+              "cv_f1_macro_mean": 0.7006412794612276,
+              "cv_f1_macro_std": 0.04946816902705543,
+              "cv_f1_weighted_mean": 0.8610961026861148,
+              "cv_f1_weighted_std": 0.020650261070009956
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.9384615384615385,
+            "balanced_accuracy": 0.8818181818181818,
+            "precision_macro": 0.8818181818181818,
+            "recall_macro": 0.8818181818181818,
+            "f1_macro": 0.8818181818181818,
+            "f1_weighted": 0.9384615384615385,
+            "confusion_matrix": [
+              [
+                16,
+                4
+              ],
+              [
+                4,
+                106
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.8,
+                "recall": 0.8,
+                "f1-score": 0.8,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.9636363636363636,
+                "recall": 0.9636363636363636,
+                "f1-score": 0.9636363636363636,
+                "support": 110.0
+              },
+              "accuracy": 0.9384615384615385,
+              "macro avg": {
+                "precision": 0.8818181818181818,
+                "recall": 0.8818181818181818,
+                "f1-score": 0.8818181818181818,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.9384615384615385,
+                "recall": 0.9384615384615385,
+                "f1-score": 0.9384615384615385,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Fail\n128    Pass\n129    Fail\nLength: 130, dtype: str",
+            "actual": "0      Pass\n1      Pass\n2      Pass\n3      Pass\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Fail\n128    Pass\n129    Fail\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.9681818181818183
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Logistic regression",
+          "cv_rows": [
+            {
+              "model": "Majority baseline",
+              "cv_accuracy_mean": 0.8458551157580283,
+              "cv_accuracy_std": 0.0005974607916355623,
+              "cv_balanced_accuracy_mean": 0.5,
+              "cv_balanced_accuracy_std": 0.0,
+              "cv_precision_macro_mean": 0.42292755787901415,
+              "cv_precision_macro_std": 0.00029873039581778115,
+              "cv_recall_macro_mean": 0.5,
+              "cv_recall_macro_std": 0.0,
+              "cv_f1_macro_mean": 0.45824561403508773,
+              "cv_f1_macro_std": 0.0001754385964912286,
+              "cv_f1_weighted_mean": 0.7752190034458812,
+              "cv_f1_weighted_std": 0.0008440443902885786
+            },
+            {
+              "model": "Logistic regression",
+              "cv_accuracy_mean": 0.9306572068707991,
+              "cv_accuracy_std": 0.026738000146423985,
+              "cv_balanced_accuracy_mean": 0.84146421107628,
+              "cv_balanced_accuracy_std": 0.052765335668686214,
+              "cv_precision_macro_mean": 0.8835984942024269,
+              "cv_precision_macro_std": 0.05972329269917707,
+              "cv_recall_macro_mean": 0.84146421107628,
+              "cv_recall_macro_std": 0.052765335668686214,
+              "cv_f1_macro_mean": 0.8596581226336539,
+              "cv_f1_macro_std": 0.054061101568794255,
+              "cv_f1_weighted_mean": 0.928697916291464,
+              "cv_f1_weighted_std": 0.027398702395386772
+            },
+            {
+              "model": "Extra trees",
+              "cv_accuracy_mean": 0.8920463032113517,
+              "cv_accuracy_std": 0.022581191835497037,
+              "cv_balanced_accuracy_mean": 0.6857693312434692,
+              "cv_balanced_accuracy_std": 0.05955804922011222,
+              "cv_precision_macro_mean": 0.8513961487975047,
+              "cv_precision_macro_std": 0.07176706383610569,
+              "cv_recall_macro_mean": 0.6857693312434692,
+              "cv_recall_macro_std": 0.05955804922011222,
+              "cv_f1_macro_mean": 0.728722318964266,
+              "cv_f1_macro_std": 0.0694174155237227,
+              "cv_f1_weighted_mean": 0.8742522919039395,
+              "cv_f1_weighted_std": 0.030019495323765855
+            }
+          ],
+          "held_out_metrics": {
+            "accuracy": 0.9230769230769231,
+            "balanced_accuracy": 0.8113636363636364,
+            "precision_macro": 0.8755482456140351,
+            "recall_macro": 0.8113636363636364,
+            "f1_macro": 0.8387896825396826,
+            "f1_weighted": 0.919490231990232,
+            "confusion_matrix": [
+              [
+                13,
+                7
+              ],
+              [
+                3,
+                107
+              ]
+            ],
+            "classification_report": {
+              "Fail": {
+                "precision": 0.8125,
+                "recall": 0.65,
+                "f1-score": 0.7222222222222222,
+                "support": 20.0
+              },
+              "Pass": {
+                "precision": 0.9385964912280702,
+                "recall": 0.9727272727272728,
+                "f1-score": 0.9553571428571429,
+                "support": 110.0
+              },
+              "accuracy": 0.9230769230769231,
+              "macro avg": {
+                "precision": 0.8755482456140351,
+                "recall": 0.8113636363636364,
+                "f1-score": 0.8387896825396826,
+                "support": 130.0
+              },
+              "weighted avg": {
+                "precision": 0.9191970310391363,
+                "recall": 0.9230769230769231,
+                "f1-score": 0.919490231990232,
+                "support": 130.0
+              }
+            },
+            "labels": [
+              "Fail",
+              "Pass"
+            ],
+            "predictions": "0      Pass\n1      Pass\n2      Pass\n3      Fail\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Pass\nLength: 130, dtype: str",
+            "actual": "0      Fail\n1      Pass\n2      Pass\n3      Fail\n4      Pass\n       ... \n125    Pass\n126    Pass\n127    Pass\n128    Pass\n129    Fail\nName: G3, Length: 130, dtype: str",
+            "roc_auc": 0.9559090909090909
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-por.csv",
+      "task": "Regression",
+      "target": "G3",
+      "target_rule": null,
+      "scenario": "early",
+      "excluded_features": [
+        "G1",
+        "G2"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "KFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Mean baseline",
+          "cv_mean": -2.444629027686549,
+          "cv_std_across_seeds": 0.015020171680656537,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Linear regression",
+          "cv_mean": -2.0640987186196296,
+          "cv_std_across_seeds": 0.03589070882470424,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": -2.0760521653275323,
+          "cv_std_across_seeds": 0.026781259330871415,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Mean baseline",
+          "held_out_mae_mean": 2.297613754261153,
+          "held_out_mae_std": 0.08671363996649419,
+          "held_out_rmse_mean": 3.0927466556565695,
+          "held_out_rmse_std": 0.0691533057824977,
+          "held_out_r2_mean": -0.015645724364480158,
+          "held_out_r2_std": 0.015601285604253475
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.4278110462762177,
+              "cv_mae_std": 0.22351797479407606,
+              "cv_rmse_mean": -3.2325772448498684,
+              "cv_rmse_std": 0.39141988765004626,
+              "cv_r2_mean": -0.020230787362770418,
+              "cv_r2_std": 0.021791674664070563
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -2.0455739449220003,
+              "cv_mae_std": 0.18087678348804873,
+              "cv_rmse_mean": -2.789740320505882,
+              "cv_rmse_std": 0.30337685830205857,
+              "cv_r2_mean": 0.22560607698732738,
+              "cv_r2_std": 0.14599541722143847
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -2.08531707955391,
+              "cv_mae_std": 0.05082146987687073,
+              "cv_rmse_mean": -2.8200614137580686,
+              "cv_rmse_std": 0.2164681715928658,
+              "cv_r2_mean": 0.20924244859296576,
+              "cv_r2_std": 0.11236037300590955
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.3946050096339113,
+            "rmse": 3.1725903070595547,
+            "r2": -0.032159804579835916,
+            "actual": "0      19\n1      12\n2      18\n3      11\n4      11\n       ..\n125     7\n126    17\n127    11\n128    12\n129    10\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.793834\n1      11.793834\n2      11.793834\n3      11.793834\n4      11.793834\n         ...    \n125    11.793834\n126    11.793834\n127    11.793834\n128    11.793834\n129    11.793834\nLength: 130, dtype: float64",
+            "residuals": "0      7.206166\n1      0.206166\n2      6.206166\n3     -0.793834\n4     -0.793834\n         ...   \n125   -4.793834\n126    5.206166\n127   -0.793834\n128    0.206166\n129   -1.793834\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.4567084656774973,
+              "cv_mae_std": 0.27118168761042893,
+              "cv_rmse_mean": -3.2600475054762654,
+              "cv_rmse_std": 0.37281916113781916,
+              "cv_r2_mean": -0.021322517498613046,
+              "cv_r2_std": 0.02483427996835242
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -2.0412555366441976,
+              "cv_mae_std": 0.23993032531289488,
+              "cv_rmse_mean": -2.802736709796691,
+              "cv_rmse_std": 0.38295068757791323,
+              "cv_r2_mean": 0.24341411710925925,
+              "cv_r2_std": 0.09064710291334664
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -2.09697077227498,
+              "cv_mae_std": 0.20846008528978086,
+              "cv_rmse_mean": -2.9053670104530873,
+              "cv_rmse_std": 0.27281367661652545,
+              "cv_r2_mean": 0.17602992957156066,
+              "cv_r2_std": 0.11991081842331267
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.2275826293167333,
+            "rmse": 3.053785662212342,
+            "r2": -0.0011545862076789426,
+            "actual": "0      13\n1       9\n2      10\n3      11\n4      11\n       ..\n125    11\n126     6\n127    13\n128     0\n129    13\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.926782\n1      11.926782\n2      11.926782\n3      11.926782\n4      11.926782\n         ...    \n125    11.926782\n126    11.926782\n127    11.926782\n128    11.926782\n129    11.926782\nLength: 130, dtype: float64",
+            "residuals": "0       1.073218\n1      -2.926782\n2      -1.926782\n3      -0.926782\n4      -0.926782\n         ...    \n125    -0.926782\n126    -5.926782\n127     1.073218\n128   -11.926782\n129     1.073218\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.449367571105932,
+              "cv_mae_std": 0.12390718768878362,
+              "cv_rmse_mean": -3.275348045174835,
+              "cv_rmse_std": 0.23779660089642582,
+              "cv_r2_mean": -0.019215796954629737,
+              "cv_r2_std": 0.013901789152141216
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -2.1054666742926904,
+              "cv_mae_std": 0.11216758937896211,
+              "cv_rmse_mean": -2.85180414589112,
+              "cv_rmse_std": 0.25006449054242813,
+              "cv_r2_mean": 0.2271514152342183,
+              "cv_r2_std": 0.06047937954601379
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -2.045868644153706,
+              "cv_mae_std": 0.09887105278751517,
+              "cv_rmse_mean": -2.790271096541071,
+              "cv_rmse_std": 0.23390085136058564,
+              "cv_r2_mean": 0.25473456153518814,
+              "cv_r2_std": 0.09600074793875296
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.2706536238328145,
+            "rmse": 3.051863997697813,
+            "r2": -0.013622782305925618,
+            "actual": "0      17\n1      11\n2      12\n3      13\n4      13\n       ..\n125    12\n126    11\n127    12\n128    15\n129    12\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.976879\n1      11.976879\n2      11.976879\n3      11.976879\n4      11.976879\n         ...    \n125    11.976879\n126    11.976879\n127    11.976879\n128    11.976879\n129    11.976879\nLength: 130, dtype: float64",
+            "residuals": "0      5.023121\n1     -0.976879\n2      0.023121\n3      1.023121\n4      1.023121\n         ...   \n125    0.023121\n126   -0.976879\n127    0.023121\n128    3.023121\n129    0.023121\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    },
+    {
+      "dataset": "student-por.csv",
+      "task": "Regression",
+      "target": "G3",
+      "target_rule": null,
+      "scenario": "grade_assisted",
+      "excluded_features": [],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "test_size": 0.2,
+      "cv_folds": 5,
+      "cv_configuration": "KFold shuffled",
+      "cv_summary": [
+        {
+          "model": "Mean baseline",
+          "cv_mean": -2.444629027686549,
+          "cv_std_across_seeds": 0.015020171680656537,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 3
+        },
+        {
+          "model": "Linear regression",
+          "cv_mean": -0.860600797455041,
+          "cv_std_across_seeds": 0.02374448699667663,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        },
+        {
+          "model": "Extra trees",
+          "cv_mean": -0.8550036082201157,
+          "cv_std_across_seeds": 0.004023378066274917,
+          "selection_metric": "cv_mae_mean",
+          "selected_seed_count": 0
+        }
+      ],
+      "held_out_summary": [
+        {
+          "model": "Mean baseline",
+          "held_out_mae_mean": 2.297613754261153,
+          "held_out_mae_std": 0.08671363996649419,
+          "held_out_rmse_mean": 3.0927466556565695,
+          "held_out_rmse_std": 0.0691533057824977,
+          "held_out_r2_mean": -0.015645724364480158,
+          "held_out_r2_std": 0.015601285604253475
+        }
+      ],
+      "seed_runs": [
+        {
+          "seed": 42,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.4278110462762177,
+              "cv_mae_std": 0.22351797479407606,
+              "cv_rmse_mean": -3.2325772448498684,
+              "cv_rmse_std": 0.39141988765004626,
+              "cv_r2_mean": -0.020230787362770418,
+              "cv_r2_std": 0.021791674664070563
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -0.8846219729446508,
+              "cv_mae_std": 0.11056440277770398,
+              "cv_rmse_mean": -1.3321830681199756,
+              "cv_rmse_std": 0.2626389330674639,
+              "cv_r2_mean": 0.8261385086224167,
+              "cv_r2_std": 0.03921264002360724
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -0.8585526987437035,
+              "cv_mae_std": 0.1050563171736156,
+              "cv_rmse_mean": -1.3462316603114648,
+              "cv_rmse_std": 0.24965596138340973,
+              "cv_r2_mean": 0.8187670843516474,
+              "cv_r2_std": 0.052274615091939
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.3946050096339113,
+            "rmse": 3.1725903070595547,
+            "r2": -0.032159804579835916,
+            "actual": "0      19\n1      12\n2      18\n3      11\n4      11\n       ..\n125     7\n126    17\n127    11\n128    12\n129    10\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.793834\n1      11.793834\n2      11.793834\n3      11.793834\n4      11.793834\n         ...    \n125    11.793834\n126    11.793834\n127    11.793834\n128    11.793834\n129    11.793834\nLength: 130, dtype: float64",
+            "residuals": "0      7.206166\n1      0.206166\n2      6.206166\n3     -0.793834\n4     -0.793834\n         ...   \n125   -4.793834\n126    5.206166\n127   -0.793834\n128    0.206166\n129   -1.793834\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 43,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.4567084656774973,
+              "cv_mae_std": 0.27118168761042893,
+              "cv_rmse_mean": -3.2600475054762654,
+              "cv_rmse_std": 0.37281916113781916,
+              "cv_r2_mean": -0.021322517498613046,
+              "cv_r2_std": 0.02483427996835242
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -0.8600373931545764,
+              "cv_mae_std": 0.10291887551284928,
+              "cv_rmse_mean": -1.3079035506299654,
+              "cv_rmse_std": 0.21815838177902952,
+              "cv_r2_mean": 0.8296378581491386,
+              "cv_r2_std": 0.05346342470939439
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -0.8506328082701765,
+              "cv_mae_std": 0.07292975911106175,
+              "cv_rmse_mean": -1.269673588036869,
+              "cv_rmse_std": 0.19031174987893323,
+              "cv_r2_mean": 0.841445240118113,
+              "cv_r2_std": 0.042409911756470665
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.2275826293167333,
+            "rmse": 3.053785662212342,
+            "r2": -0.0011545862076789426,
+            "actual": "0      13\n1       9\n2      10\n3      11\n4      11\n       ..\n125    11\n126     6\n127    13\n128     0\n129    13\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.926782\n1      11.926782\n2      11.926782\n3      11.926782\n4      11.926782\n         ...    \n125    11.926782\n126    11.926782\n127    11.926782\n128    11.926782\n129    11.926782\nLength: 130, dtype: float64",
+            "residuals": "0       1.073218\n1      -2.926782\n2      -1.926782\n3      -0.926782\n4      -0.926782\n         ...    \n125    -0.926782\n126    -5.926782\n127     1.073218\n128   -11.926782\n129     1.073218\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        },
+        {
+          "seed": 44,
+          "train_rows": 519,
+          "test_rows": 130,
+          "selected_model": "Mean baseline",
+          "cv_rows": [
+            {
+              "model": "Mean baseline",
+              "cv_mae_mean": -2.449367571105932,
+              "cv_mae_std": 0.12390718768878362,
+              "cv_rmse_mean": -3.275348045174835,
+              "cv_rmse_std": 0.23779660089642582,
+              "cv_r2_mean": -0.019215796954629737,
+              "cv_r2_std": 0.013901789152141216
+            },
+            {
+              "model": "Linear regression",
+              "cv_mae_mean": -0.8371430262658961,
+              "cv_mae_std": 0.05313665951893151,
+              "cv_rmse_mean": -1.2851956220120555,
+              "cv_rmse_std": 0.08059513888586939,
+              "cv_r2_mean": 0.8385758585822796,
+              "cv_r2_std": 0.03706177443367255
+            },
+            {
+              "model": "Extra trees",
+              "cv_mae_mean": -0.8558253176464671,
+              "cv_mae_std": 0.06761988333589639,
+              "cv_rmse_mean": -1.335471770496468,
+              "cv_rmse_std": 0.1588644081243489,
+              "cv_r2_mean": 0.8217663656924312,
+              "cv_r2_std": 0.06365871333738837
+            }
+          ],
+          "held_out_metrics": {
+            "mae": 2.2706536238328145,
+            "rmse": 3.051863997697813,
+            "r2": -0.013622782305925618,
+            "actual": "0      17\n1      11\n2      12\n3      13\n4      13\n       ..\n125    12\n126    11\n127    12\n128    15\n129    12\nName: G3, Length: 130, dtype: int64",
+            "predictions": "0      11.976879\n1      11.976879\n2      11.976879\n3      11.976879\n4      11.976879\n         ...    \n125    11.976879\n126    11.976879\n127    11.976879\n128    11.976879\n129    11.976879\nLength: 130, dtype: float64",
+            "residuals": "0      5.023121\n1     -0.976879\n2      0.023121\n3      1.023121\n4      1.023121\n         ...   \n125    0.023121\n126   -0.976879\n127    0.023121\n128    3.023121\n129    0.023121\nLength: 130, dtype: float64"
+          },
+          "errors": {}
+        }
+      ],
+      "warnings": [
+        "Results are single-dataset estimates and do not establish generalization.",
+        "The mathematics and Portuguese datasets may contain overlapping students; datasets are never combined.",
+        "CV variability is across seeds; test-set values are also averaged across fixed held-out splits."
+      ]
+    }
+  ],
+  "limitations": [
+    "This report validates only the bundled datasets; it does not establish performance on other schools or populations.",
+    "The scenarios are not comparable in information availability when G1/G2 are included.",
+    "Metrics are based on modest repeated fixed splits, not subject-level clustering across possible overlaps.",
+    "No evidence is provided that predictive accuracy is improved over prior work or research baselines."
+  ]
+}
