@@ -42,10 +42,7 @@ from src.evaluation import EvaluationError, build_baseline_comparison, reproduci
 from src.xai import ExplanationError, model_specific_explanation, permutation_explanation, predict_with_explanation
 
 
-TITLE = (
-    "AutoML-Based Student Academic Performance Prediction Using Automated "
-    "Feature Selection, Hyperparameter Optimization, and Explainable AI"
-)
+TITLE = "An Automated Student Performance Prediction System"
 STATE_KEY = "phase5_experiment"
 NAV_KEY = "student_automl_workspace"
 CONFIG_KEYS = (
@@ -65,15 +62,20 @@ CONFIG_KEYS = (
 
 def _render_header_for_page(page: str, dataset_name: str, rows: int) -> None:
     descriptions = {
+        "Student Success Dashboard": (
+            "SCHOOL OVERVIEW",
+            "Student success dashboard",
+            "Monitor cohort outcomes, spot students who may need support, and move from insight to prediction.",
+        ),
         "Dataset Overview": (
             "OVERVIEW",
             "Dataset overview",
             "Inspect dataset quality, feature composition, and target distributions before training.",
         ),
-        "Experiment Setup": (
-            "WORKSPACE",
-            "Configure an experiment",
-            "Choose a prediction task and evaluation strategy. Training starts only when you run it.",
+        "Model Studio": (
+            "MODEL STUDIO",
+            "Configure a prediction model",
+            "Choose a target, prediction scenario, and evaluation strategy before training.",
         ),
         "Model Training & Comparison": (
             "MODEL WORKSPACE",
@@ -85,10 +87,15 @@ def _render_header_for_page(page: str, dataset_name: str, rows: int) -> None:
             "Held-out results",
             "Review final test metrics, class-level performance, and prediction errors.",
         ),
+        "Student Predictions": (
+            "STUDENT SERVICES",
+            "Predict student performance",
+            "Score an individual student profile or a cohort file with the selected, evaluated model.",
+        ),
         "Explainable AI": (
             "MODEL TRANSPARENCY",
             "Explainable AI",
-            "Explore global and individual explanations for the fitted Optuna-selected model.",
+            "Explore global and individual explanations for available fitted models.",
         ),
         "Saved Experiments": (
             "EXPERIMENT HISTORY",
@@ -110,6 +117,18 @@ def _format_metric(value: object, digits: int = 3) -> str:
     if isinstance(value, (int, float)):
         return f"{value:.{digits}f}"
     return str(value)
+
+
+def _experiment_pipelines(experiment: dict) -> dict[str, object]:
+    pipelines = {
+        f"CV-selected baseline · {experiment['baseline_winner']}": experiment["baseline_pipeline"],
+    }
+    automl_result = experiment["automl_result"]
+    if automl_result is not None and automl_result.best_pipeline is not None:
+        pipelines[
+            f"Optuna-selected · {automl_result.metadata.get('model_family', 'model')}"
+        ] = automl_result.best_pipeline
+    return pipelines
 
 
 def _target_distribution(frame: pd.DataFrame, column: str) -> pd.DataFrame:
@@ -194,8 +213,134 @@ def _render_overview(frame: pd.DataFrame, dataset_name: str, delimiter: str) -> 
         st.dataframe(schema, width="stretch", hide_index=True)
 
 
+def _render_student_dashboard(
+    frame: pd.DataFrame,
+    dataset_name: str,
+    demo_mode: bool,
+    model_ready: bool,
+) -> None:
+    _render_header_for_page("Student Success Dashboard", dataset_name, len(frame))
+    render_hero(
+        "A clearer view of student progress.",
+        "Explore cohort outcomes, identify students who may benefit from a check-in, and use evaluated models "
+        "to support—not replace—educator judgment.",
+        "STUDENT PERFORMANCE SYSTEM",
+    )
+    if demo_mode:
+        st.info(
+            "Demo mode is using the bundled student cohort. Upload your own CSV from the sidebar to explore "
+            "your data instead."
+        )
+
+    grades = (
+        pd.to_numeric(frame["G3"], errors="coerce").dropna()
+        if "G3" in frame.columns else pd.Series(dtype=float)
+    )
+    absences = (
+        pd.to_numeric(frame["absences"], errors="coerce").dropna()
+        if "absences" in frame.columns else pd.Series(dtype=float)
+    )
+    at_risk_count = int((grades < 10).sum())
+    pass_rate = float((grades >= 10).mean() * 100) if not grades.empty else None
+    average_grade = float(grades.mean()) if not grades.empty else None
+
+    render_metric_cards([
+        ("Students in cohort", f"{len(frame):,}"),
+        ("Average final grade", f"{average_grade:.1f} / 20" if average_grade is not None else "Not available"),
+        ("Observed pass rate", f"{pass_rate:.1f}%" if pass_rate is not None else "Not available"),
+        ("Below pass threshold", f"{at_risk_count:,}" if not grades.empty else "Not available"),
+    ])
+    if not grades.empty:
+        st.caption(
+            "These are observed historical outcomes from the dataset (G3); they are not model-generated predictions."
+        )
+
+    chart_left, chart_right = st.columns((1.2, 1))
+    with chart_left:
+        st.subheader("Achievement distribution")
+        if grades.empty:
+            st.info("A numeric G3 final-grade column is needed to show the achievement distribution.")
+        else:
+            grade_bands = pd.cut(
+                grades,
+                bins=[float("-inf"), 9.99, 14.99, float("inf")],
+                labels=["Below 10", "10-14", "15+"],
+            )
+            distribution = (
+                grade_bands.value_counts(sort=False)
+                .rename_axis("Grade band")
+                .reset_index(name="Students")
+            )
+            render_bar_chart(distribution, "Grade band", "Students", "Observed final-grade bands", height=330)
+    with chart_right:
+        st.subheader("Attendance snapshot")
+        if absences.empty:
+            st.info("An absences column is needed to show the attendance snapshot.")
+        else:
+            render_metric_cards([
+                ("Average absences", f"{absences.mean():.1f}"),
+                ("Students with 10+ absences", f"{int((absences >= 10).sum()):,}"),
+            ], columns=2)
+            absence_bands = pd.cut(
+                absences,
+                bins=[float("-inf"), 2.99, 9.99, float("inf")],
+                labels=["0-2", "3-9", "10+"],
+            )
+            attendance = (
+                absence_bands.value_counts(sort=False)
+                .rename_axis("Absences")
+                .reset_index(name="Students")
+            )
+            render_bar_chart(attendance, "Absences", "Students", "Students by recorded absences", height=250)
+
+    if "G3" in frame.columns and not grades.empty:
+        st.subheader("Observed support watchlist")
+        st.caption(
+            "Students below the historical pass threshold (G3 < 10). Use this as a review queue, not a prediction."
+        )
+        watch_columns = [
+            column for column in ("school", "sex", "age", "studytime", "absences", "G1", "G2", "G3")
+            if column in frame.columns
+        ]
+        watchlist = frame.loc[grades.index[grades < 10], watch_columns].copy()
+        watchlist.insert(0, "Cohort record", watchlist.index + 1)
+        watchlist["_sort_grade"] = grades.loc[watchlist.index]
+        watchlist = watchlist.sort_values("_sort_grade").drop(columns="_sort_grade").head(10)
+        if watchlist.empty:
+            st.success("No records fall below the observed pass threshold.")
+        else:
+            st.dataframe(watchlist, width="stretch", hide_index=True)
+
+    status_left, status_right = st.columns((1, 1))
+    with status_left:
+        render_panel(
+            "Prediction model",
+            "Ready to use" if model_ready else "Not configured",
+            "Open Student Predictions to score a student or batch."
+            if model_ready else "Open Model Studio to evaluate a model before generating predictions.",
+        )
+    with status_right:
+        st.markdown("#### Continue")
+        st.button(
+            "Open student predictions",
+            key="dashboard_open_predictions",
+            width="stretch",
+            on_click=lambda: st.session_state.update({NAV_KEY: "Student Predictions"}),
+        )
+        st.button(
+            "Configure a model",
+            key="dashboard_open_model_studio",
+            width="stretch",
+            on_click=lambda: st.session_state.update({NAV_KEY: "Model Studio"}),
+        )
+
+
 def _configuration_defaults(frame: pd.DataFrame) -> dict:
     target_default = str(frame.columns[0])
+    if "G3" in frame.columns:
+        final_grades = pd.to_numeric(frame["G3"], errors="coerce").dropna()
+        if (final_grades < 10).any() and (final_grades >= 10).any():
+            target_default = "G3"
     target = st.session_state.get("experiment_target", target_default)
     if target not in frame.columns:
         target = target_default
@@ -229,7 +374,7 @@ def _configuration_defaults(frame: pd.DataFrame) -> dict:
 
 
 def _render_setup(frame: pd.DataFrame, dataset_name: str) -> tuple[dict, bool]:
-    _render_header_for_page("Experiment Setup", dataset_name, len(frame))
+    _render_header_for_page("Model Studio", dataset_name, len(frame))
     defaults = _configuration_defaults(frame)
     with st.form("experiment_configuration"):
         left, right = st.columns((1.15, 1))
@@ -496,8 +641,12 @@ def _render_training(
         st.caption("Global feature importance and individual explanations are available in the Explainable AI workspace.")
 
 
-def _render_roc_curve(result: object, X_test: pd.DataFrame, y_test: pd.Series) -> None:
-    pipeline = getattr(result, "best_pipeline", None)
+def _render_roc_curve(
+    pipeline: object,
+    X_test: pd.DataFrame,
+    y_test: pd.Series,
+    model_label: str,
+) -> None:
     if pipeline is None or y_test.nunique() != 2:
         st.caption("ROC curve is not available for this evaluation.")
         return
@@ -523,8 +672,14 @@ def _render_roc_curve(result: object, X_test: pd.DataFrame, y_test: pd.Series) -
         "False positive rate": false_positive_rate,
         "True positive rate": true_positive_rate,
     })
-    render_line_chart(roc_frame, "False positive rate", "True positive rate", "ROC curve", height=340)
-    st.caption(f"Positive class: {positive_label}. ROC curve is shown for the Optuna-selected model only.")
+    render_line_chart(
+        roc_frame,
+        "False positive rate",
+        "True positive rate",
+        f"ROC curve · {model_label}",
+        height=340,
+    )
+    st.caption(f"Positive class: {positive_label}. ROC curves require a binary target and ranking scores.")
 
 
 def _render_evaluation(experiment: dict | None, active: bool, dataset_name: str, rows: int) -> None:
@@ -552,10 +707,22 @@ def _render_evaluation(experiment: dict | None, active: bool, dataset_name: str,
             report_frame = pd.DataFrame(metrics["classification_report"]).transpose()
             st.dataframe(report_frame, width="stretch")
         st.caption("Precision, recall, and F1 are shown for each class. ROC-AUC is a ranking score, not a calibrated probability.")
+        st.subheader("CV-selected baseline · ROC analysis")
+        _render_roc_curve(
+            experiment["baseline_pipeline"],
+            experiment["split"].X_test,
+            experiment["split"].y_test,
+            str(experiment["baseline_winner"]),
+        )
         automl_result = experiment["automl_result"]
         if automl_result is not None:
             st.subheader("Optuna-selected model · ROC analysis")
-            _render_roc_curve(automl_result, experiment["split"].X_test, experiment["split"].y_test)
+            _render_roc_curve(
+                automl_result.best_pipeline,
+                experiment["split"].X_test,
+                experiment["split"].y_test,
+                f"Optuna · {automl_result.metadata.get('model_family', 'selected')}",
+            )
             optuna_metrics = automl_result.final_metrics
             st.subheader("Baseline and Optuna test metrics")
             compare_rows = [{
@@ -594,6 +761,249 @@ def _render_evaluation(experiment: dict | None, active: bool, dataset_name: str,
             }            ]), width="stretch", hide_index=True)
 
 
+def _render_predictions(
+    experiment: dict | None,
+    active: bool,
+    dataset_name: str,
+    rows_count: int,
+) -> None:
+    _render_header_for_page("Student Predictions", dataset_name, rows_count)
+    if not active or experiment is None:
+        st.info("Set up and evaluate a model before generating student predictions.")
+        st.button(
+            "Open model setup",
+            key="predictions_open_model_setup",
+            type="primary",
+            on_click=lambda: st.session_state.update({NAV_KEY: "Model Studio"}),
+        )
+        return
+
+    pipelines = _experiment_pipelines(experiment)
+    selected_model = st.selectbox(
+        "Prediction model",
+        list(pipelines),
+        key="prediction_model",
+    )
+    pipeline = pipelines[selected_model]
+    required_features = experiment["split"].X_train.columns.tolist()
+    st.caption(
+        f"{experiment['task']} · {experiment['scenario']} · "
+        f"{len(required_features)} required input features"
+    )
+
+    st.subheader("Predict an individual student")
+    st.caption("Fields are prefilled from the training cohort. Review the profile before submitting.")
+    profile_values = {}
+    with st.form("single_student_prediction_form"):
+        columns = st.columns(2)
+        for index, feature in enumerate(required_features):
+            training_values = experiment["split"].X_train[feature]
+            label = str(feature).replace("_", " ").capitalize()
+            with columns[index % 2]:
+                if pd.api.types.is_numeric_dtype(training_values):
+                    numeric_values = pd.to_numeric(training_values, errors="coerce").dropna()
+                    default_value = float(numeric_values.median()) if not numeric_values.empty else 0.0
+                    if pd.api.types.is_integer_dtype(training_values):
+                        profile_values[feature] = st.number_input(
+                            label,
+                            value=int(round(default_value)),
+                            step=1,
+                            key=f"single_student_feature_{index}",
+                        )
+                    else:
+                        profile_values[feature] = st.number_input(
+                            label,
+                            value=default_value,
+                            step=0.1,
+                            key=f"single_student_feature_{index}",
+                        )
+                else:
+                    options = training_values.dropna().drop_duplicates().tolist()
+                    if options and len(options) <= 40:
+                        default_values = training_values.mode(dropna=True)
+                        default_index = (
+                            options.index(default_values.iloc[0])
+                            if not default_values.empty else 0
+                        )
+                        profile_values[feature] = st.selectbox(
+                            label,
+                            options,
+                            index=default_index,
+                            key=f"single_student_feature_{index}",
+                        )
+                    else:
+                        default_value = training_values.mode(dropna=True)
+                        profile_values[feature] = st.text_input(
+                            label,
+                            value=str(default_value.iloc[0]) if not default_value.empty else "",
+                            key=f"single_student_feature_{index}",
+                        )
+        predict_student = st.form_submit_button("Predict student outcome", type="primary")
+
+    profile_signature = (
+        experiment["signature"],
+        selected_model,
+        tuple((str(feature), repr(value)) for feature, value in profile_values.items()),
+    )
+    if predict_student:
+        try:
+            profile = pd.DataFrame([profile_values], columns=required_features)
+            predicted_value = pipeline.predict(profile)[0]
+            class_scores = None
+            if experiment["task"] == "Classification" and hasattr(pipeline, "predict_proba"):
+                class_scores = pd.DataFrame({
+                    "Outcome": pipeline.classes_,
+                    "Model score": pipeline.predict_proba(profile)[0],
+                })
+            st.session_state["single_student_prediction"] = {
+                "signature": profile_signature,
+                "model": selected_model,
+                "prediction": predicted_value,
+                "class_scores": class_scores,
+            }
+        except (TypeError, ValueError) as exc:
+            st.error(f"The student profile could not be scored: {exc}")
+
+    single_result = st.session_state.get("single_student_prediction")
+    if single_result is not None and single_result["signature"] == profile_signature:
+        st.metric("Predicted outcome", str(single_result["prediction"]))
+        st.caption(f"Scored with {single_result['model']}. Review the output with an educator.")
+        if single_result["class_scores"] is not None:
+            st.dataframe(single_result["class_scores"], width="stretch", hide_index=True)
+            st.caption("Model scores are not guaranteed to be calibrated probabilities.")
+
+    st.divider()
+    st.subheader("Score a student cohort")
+    with st.expander("Required input features"):
+        st.dataframe(
+            pd.DataFrame({
+                "Feature": required_features,
+                "Training data type": experiment["split"].X_train.dtypes.astype(str).values,
+            }),
+            width="stretch",
+            hide_index=True,
+        )
+    template = pd.DataFrame(columns=required_features).to_csv(index=False).encode("utf-8")
+    st.download_button(
+        "Download prediction CSV template",
+        data=template,
+        file_name="student_prediction_template.csv",
+        mime="text/csv",
+        key="download_prediction_template",
+    )
+    prediction_file = st.file_uploader(
+        "Upload one student or a batch of students",
+        type=["csv"],
+        help=(
+            "Include every required feature shown above. Additional columns, including "
+            "targets or unused grades, are ignored and never passed to the model."
+        ),
+        key="prediction_csv",
+    )
+
+    prediction_signature = None
+    if prediction_file is not None:
+        prediction_signature = (
+            experiment["signature"],
+            selected_model,
+            hashlib.sha256(prediction_file.getvalue()).hexdigest(),
+        )
+        if st.button("Generate predictions", type="primary", key="generate_predictions"):
+            try:
+                prediction_input, _ = load_csv(
+                    prediction_file,
+                    minimum_columns=1,
+                )
+                missing_features = [
+                    feature for feature in required_features
+                    if feature not in prediction_input.columns
+                ]
+                if missing_features:
+                    raise DatasetValidationError(
+                        "Prediction data is missing required features: "
+                        + ", ".join(missing_features)
+                    )
+
+                model_input = prediction_input.loc[:, required_features]
+                predictions = pipeline.predict(model_input)
+                if experiment["task"] == "Classification":
+                    output = pd.DataFrame({
+                        "Record": range(1, len(model_input) + 1),
+                        "Predicted outcome": predictions,
+                    })
+                    if hasattr(pipeline, "predict_proba"):
+                        probabilities = pipeline.predict_proba(model_input)
+                        for class_index, class_label in enumerate(pipeline.classes_):
+                            output[f"Score ({class_label})"] = probabilities[:, class_index]
+                else:
+                    output = pd.DataFrame({
+                        "Record": range(1, len(model_input) + 1),
+                        "Predicted value": predictions,
+                    })
+
+                st.session_state["student_prediction_result"] = {
+                    "signature": prediction_signature,
+                    "model": selected_model,
+                    "results": output,
+                    "ignored_columns": [
+                        column for column in prediction_input.columns
+                        if column not in required_features
+                    ],
+                }
+            except (DatasetValidationError, TypeError, ValueError) as exc:
+                st.error(f"Predictions could not be generated: {exc}")
+
+    prediction_result = st.session_state.get("student_prediction_result")
+    if (
+        prediction_signature is None
+        or prediction_result is None
+        or prediction_result["signature"] != prediction_signature
+    ):
+        return
+
+    results = prediction_result["results"]
+    prediction_column = (
+        "Predicted outcome" if experiment["task"] == "Classification" else "Predicted value"
+    )
+    predicted_count = results[prediction_column].nunique(dropna=False)
+    render_metric_cards([
+        ("Prediction model", prediction_result["model"]),
+        ("Students scored", f"{len(results):,}"),
+        ("Distinct predictions", f"{predicted_count:,}"),
+    ], columns=3)
+    if prediction_result["ignored_columns"]:
+        st.info(
+            "Only the trained input features were used. Additional columns were ignored: "
+            + ", ".join(map(str, prediction_result["ignored_columns"]))
+        )
+    if experiment["task"] == "Classification":
+        st.caption(
+            "Class scores are model outputs and are not guaranteed to be calibrated probabilities."
+        )
+        distribution = (
+            results[prediction_column]
+            .value_counts(dropna=False)
+            .rename_axis("Predicted outcome")
+            .reset_index(name="Students")
+        )
+        render_bar_chart(
+            distribution,
+            "Predicted outcome",
+            "Students",
+            "Predicted class distribution",
+            height=290,
+        )
+    st.subheader("Prediction results")
+    st.dataframe(results, width="stretch", hide_index=True)
+    st.download_button(
+        "Download prediction results",
+        data=results.to_csv(index=False).encode("utf-8-sig"),
+        file_name="student_predictions.csv",
+        mime="text/csv",
+        key="download_prediction_results",
+    )
+
+
 def _render_xai(
     experiment: dict | None,
     active: bool,
@@ -603,13 +1013,16 @@ def _render_xai(
     _render_header_for_page("Explainable AI", dataset_name, rows)
     st.info("Model explanations describe fitted-model behavior and do not establish causation.")
     if not active or experiment is None:
-        st.info("Run an Optuna experiment to make a fitted selected pipeline available for explanations.")
-        return
-    result = experiment["automl_result"]
-    if result is None:
-        st.info("Enable Optuna tuning in Experiment Setup to access the selected pipeline's explanations.")
+        st.info("Complete an experiment to make a fitted model available for explanations.")
         return
 
+    pipelines = _experiment_pipelines(experiment)
+    selected_model = st.selectbox(
+        "Explain model",
+        list(pipelines),
+        key="xai_model",
+    )
+    pipeline = pipelines[selected_model]
     split = experiment["split"]
     task = experiment["task"]
     global_left, global_right = st.columns((1.1, 1))
@@ -618,7 +1031,7 @@ def _render_xai(
         st.caption("Held-out post-selection diagnostic; higher values indicate a larger metric decrease after permutation.")
         try:
             importance = permutation_explanation(
-                result.best_pipeline,
+                pipeline,
                 split.X_test,
                 split.y_test,
                 task,
@@ -641,7 +1054,7 @@ def _render_xai(
     with global_right:
         st.subheader("Model-specific importance")
         try:
-            native, method = model_specific_explanation(result.best_pipeline)
+            native, method = model_specific_explanation(pipeline)
         except ExplanationError as exc:
             st.info(f"Native explanation unavailable: {exc}")
         else:
@@ -685,7 +1098,7 @@ def _render_xai(
 
     if record is not None:
         try:
-            local = predict_with_explanation(result.best_pipeline, record, task)
+            local = predict_with_explanation(pipeline, record, task)
         except ExplanationError as exc:
             st.warning(f"Individual explanation unavailable: {exc}")
         else:
@@ -866,38 +1279,30 @@ def _render_validation(dataset_name: str, rows_count: int) -> None:
         st.caption(str(warning))
 
 
-def _render_no_upload() -> None:
-    render_page_header("ACADEMIC ANALYTICS", "Student AutoML", "A clear, reproducible workflow for academic prediction.")
-    render_hero(
-        "From student data to explainable model evaluation.",
-        "Upload a CSV dataset to inspect quality, configure a classification or regression experiment, "
-        "compare models, and review final held-out results.",
-    )
-    st.info("Upload a student dataset from the sidebar to begin.")
-    feature_columns = st.columns(3)
-    with feature_columns[0]:
-        render_panel("Prepare", "Review data quality", "Inspect records, missing values, duplicates, and feature types.")
-    with feature_columns[1]:
-        render_panel("Evaluate", "Compare with cross-validation", "Choose a target, scenario, and evaluation strategy.")
-    with feature_columns[2]:
-        render_panel("Explain", "Inspect model behavior", "Review global and individual explanations after training.")
-
-
 def main() -> None:
-    st.set_page_config(page_title="Student AutoML", page_icon="SA", layout="wide")
+    st.set_page_config(page_title="Student Performance System", page_icon="SP", layout="wide")
     apply_dashboard_style()
 
     render_brand()
     st.sidebar.markdown("**WORKSPACE**")
+    demo_cohort = st.sidebar.selectbox(
+        "Demo cohort",
+        ["Math cohort", "Portuguese cohort"],
+        key="demo_cohort",
+        help="Used when no CSV is uploaded.",
+    )
     uploaded_file = st.sidebar.file_uploader(
         "Student dataset",
         type=["csv"],
         help="Comma, semicolon, tab, and pipe-delimited CSV files are supported.",
     )
-    st.sidebar.caption("Metadata is read from JSON files only; serialized model files are never loaded in this view.")
+    st.sidebar.caption(
+        "Upload a CSV to use your own cohort; otherwise the selected bundled demo is loaded. "
+        "Metadata is read from JSON files only; serialized model files are never loaded in history."
+    )
     st.sidebar.divider()
     st.sidebar.caption("PROJECT")
-    st.sidebar.caption("AutoML-based academic performance prediction with automated feature selection, optimization, and explainability.")
+    st.sidebar.caption("Student outcomes, individual and cohort predictions, model evaluation, and explainability.")
     with st.sidebar.expander("Project details"):
         st.caption(TITLE)
 
@@ -908,29 +1313,44 @@ def main() -> None:
         "Experiment Setup",
         "Model Training and Comparison",
         "Evaluation Results",
+        "Student Predictions",
         "Explainable AI",
         "Saved Experiments",
         "Rigorous Validation",
     ])
 
-    if uploaded_file is None:
-        _render_no_upload()
-        st.stop()
+    if uploaded_file is not None:
+        file_bytes = uploaded_file.getvalue()
+        dataset_name = uploaded_file.name
+        demo_mode = False
+    else:
+        demo_filename = "student-mat.csv" if demo_cohort == "Math cohort" else "student-por.csv"
+        demo_path = Path(__file__).resolve().parent / "data" / "raw" / demo_filename
+        try:
+            file_bytes = demo_path.read_bytes()
+        except OSError as exc:
+            st.error(f"The bundled demo cohort could not be read: {exc}")
+            st.stop()
+        dataset_name = f"Demo · {demo_cohort}"
+        demo_mode = True
 
     try:
-        frame, delimiter = load_csv(uploaded_file)
+        frame, delimiter = load_csv(file_bytes)
     except DatasetValidationError as exc:
         st.error(str(exc))
         st.stop()
 
-    file_bytes = uploaded_file.getvalue()
-    dataset_fingerprint = hashlib.sha256(file_bytes).hexdigest()
+    dataset_fingerprint = hashlib.sha256(
+        file_bytes + b"\0" + dataset_name.encode("utf-8")
+    ).hexdigest()
     if st.session_state.get("dataset_fingerprint") != dataset_fingerprint:
         st.session_state[STATE_KEY] = None
         st.session_state["dataset_fingerprint"] = dataset_fingerprint
         for key in CONFIG_KEYS:
             st.session_state.pop(key, None)
-        st.session_state[NAV_KEY] = "Experiment Setup"
+        st.session_state[NAV_KEY] = (
+            "Model Studio" if uploaded_file is not None else "Student Success Dashboard"
+        )
 
     if NAV_KEY not in st.session_state:
         st.session_state[NAV_KEY] = NAVIGATION[0]
@@ -940,12 +1360,13 @@ def main() -> None:
         key=NAV_KEY,
         label_visibility="collapsed",
     )
-    st.success(f"Dataset ready · {uploaded_file.name} · {len(frame):,} records · {frame.shape[1]:,} features")
+    source_label = uploaded_file.name if uploaded_file is not None else demo_cohort
+    st.success(f"Dataset ready · {source_label} · {len(frame):,} records · {frame.shape[1]:,} features")
 
     defaults = _configuration_defaults(frame)
     run_requested = False
-    if workspace == "Experiment Setup":
-        settings, run_requested = _render_setup(frame, uploaded_file.name, )
+    if workspace == "Model Studio":
+        settings, run_requested = _render_setup(frame, dataset_name)
         defaults.update(settings)
     else:
         settings = defaults
@@ -1014,7 +1435,7 @@ def main() -> None:
                 }
 
             with st.status("Cross-validating baseline models", expanded=True) as status:
-                baseline_comparison, baseline_metrics, model_errors, baseline_winner = build_baseline_comparison(
+                baseline_comparison, baseline_metrics, model_errors, baseline_winner, baseline_pipeline = build_baseline_comparison(
                     split.X_train,
                     split.y_train,
                     split.X_test,
@@ -1023,6 +1444,7 @@ def main() -> None:
                     models,
                     folds=int(settings["cv_folds"]),
                     seed=int(settings["seed"]),
+                    return_selected_pipeline=True,
                 )
                 status.update(label="Baseline comparison complete", state="complete")
 
@@ -1069,15 +1491,16 @@ def main() -> None:
                 "baseline_metrics": baseline_metrics,
                 "model_errors": model_errors,
                 "baseline_winner": baseline_winner,
+                "baseline_pipeline": baseline_pipeline,
                 "automl_result": automl_result,
                 "saved_paths": saved_paths,
-                "dataset_name": uploaded_file.name,
+                "dataset_name": dataset_name,
             }
             st.success("Experiment completed. Detailed results are available in the workspace navigation.")
             _render_training(
                 st.session_state[STATE_KEY],
                 True,
-                uploaded_file.name,
+                dataset_name,
                 len(frame),
             )
             return
@@ -1088,33 +1511,47 @@ def main() -> None:
             st.error(f"Training could not complete: {type(exc).__name__}: {exc}")
             st.stop()
 
-    if workspace == "Dataset Overview":
-        _render_overview(frame, uploaded_file.name, delimiter)
+    if workspace == "Student Success Dashboard":
+        _render_student_dashboard(
+            frame,
+            dataset_name,
+            demo_mode,
+            active_experiment is not None,
+        )
+    elif workspace == "Dataset Overview":
+        _render_overview(frame, dataset_name, delimiter)
     elif workspace == "Model Training & Comparison":
         _render_training(
             active_experiment,
             active_experiment is not None,
-            uploaded_file.name,
+            dataset_name,
             len(frame),
         )
     elif workspace == "Evaluation Results":
         _render_evaluation(
             active_experiment,
             active_experiment is not None,
-            uploaded_file.name,
+            dataset_name,
+            len(frame),
+        )
+    elif workspace == "Student Predictions":
+        _render_predictions(
+            active_experiment,
+            active_experiment is not None,
+            dataset_name,
             len(frame),
         )
     elif workspace == "Explainable AI":
         _render_xai(
             active_experiment,
             active_experiment is not None,
-            uploaded_file.name,
+            dataset_name,
             len(frame),
         )
     elif workspace == "Saved Experiments":
-        _render_saved_experiments(uploaded_file.name, len(frame))
+        _render_saved_experiments(dataset_name, len(frame))
     elif workspace == "Rigorous Validation":
-        _render_validation(uploaded_file.name, len(frame))
+        _render_validation(dataset_name, len(frame))
 
 
 main()

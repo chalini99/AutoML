@@ -17,8 +17,10 @@ except ImportError:
 
 
 NAVIGATION = (
+    "Student Success Dashboard",
+    "Student Predictions",
     "Dataset Overview",
-    "Experiment Setup",
+    "Model Studio",
     "Model Training & Comparison",
     "Evaluation Results",
     "Explainable AI",
@@ -254,10 +256,10 @@ def render_brand() -> None:
     st.sidebar.markdown(
         """
         <div class="sa-brand">
-            <div class="sa-mark">SA</div>
+            <div class="sa-mark">SP</div>
             <div>
-                <div class="sa-brand-title">Student AutoML</div>
-                <div class="sa-brand-subtitle">Academic analytics platform</div>
+                <div class="sa-brand-title">Student Performance</div>
+                <div class="sa-brand-subtitle">Prediction and support platform</div>
             </div>
         </div>
         """,

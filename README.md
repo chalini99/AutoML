@@ -2,17 +2,20 @@
 
 ### AutoML-Based Student Academic Performance Prediction Using Automated Feature Selection, Hyperparameter Optimization, and Explainable AI
 
-Student AutoML is an interactive machine-learning application for exploring student academic-performance data. It brings experiment setup, automated model comparison, rigorous evaluation, and explainable AI together in a polished Streamlit dashboard.
+The Automated Student Performance Prediction System is a demo-ready school analytics platform built with Streamlit. It opens on a student-success dashboard backed by a bundled cohort, supports individual and batch predictions, and keeps model configuration, evaluation, and explainability available as supporting workspaces.
 
 ## Project highlights
 
+- **Demo-first school dashboard:** explore the bundled Math or Portuguese cohort immediately, without preparing an upload.
 - **Student-focused prediction scenarios:** configure early prediction or prediction with prior-grade information.
+- **Individual and cohort scoring:** enter a student profile or upload a batch CSV and download the results.
+- **Cohort support indicators:** review observed achievement and attendance patterns, with historical outcomes clearly distinguished from model predictions.
 - **Automated model development:** compare established classifiers and regressors, then use Optuna to search model hyperparameters.
 - **Automated feature selection:** evaluate multiple feature-selection strategies as part of the model-training workflow.
 - **Reproducible evaluation:** use seeded data splits and cross-validation to compare candidate models consistently.
 - **Class-aware analysis:** evaluate per-class precision, recall, and F1 alongside aggregate metrics and confusion matrices.
 - **Explainable predictions:** inspect permutation importance, supported native feature importance, and individual prediction explanations.
-- **Premium analytics workspace:** navigate dataset insights, experiment setup, training, evaluation, explainability, saved experiments, and rigorous validation from the sidebar.
+- **School-facing workspace:** navigate the student-success dashboard, predictions, cohort overview, model studio, evaluation, explainability, saved experiments, and rigorous validation from the sidebar.
 - **Experiment history:** save timestamped result artifacts and review experiment metadata in the dashboard.
 
 ## Project contribution
@@ -25,26 +28,29 @@ Early-prediction experiments explicitly exclude `G1`, `G2`, `G3`, and recognized
 
 | Workspace | What it offers |
 |---|---|
+| **Student Success Dashboard** | Cohort-level achievement and attendance snapshot, observed support watchlist, and direct links to prediction/model workflows |
+| **Student Predictions** | Score an individual student using a profile form or score a batch from CSV; download a prediction template and results |
 | **Dataset Overview** | Record and feature counts, data quality summaries, target distributions, feature types, and a dataset preview |
-| **Experiment Setup** | Task and target selection, prediction scenario, split and cross-validation settings, random seed, feature selection, and Optuna controls |
+| **Model Studio** | Task and target selection, prediction scenario, split and cross-validation settings, random seed, feature selection, and Optuna controls |
 | **Model Training & Comparison** | Baseline comparisons, training cross-validation scores, and Optuna trial results |
 | **Evaluation Results** | Held-out metrics, classification reports, confusion matrices, and visual comparisons |
-| **Explainable AI** | Global feature importance, supported model-specific explanations, and individual predictions |
+| **Explainable AI** | Global feature importance, supported model-specific explanations, and individual predictions for available fitted models |
 | **Saved Experiments** | Timestamped experiment metadata and result history |
 | **Rigorous Validation** | Multi-seed results and class-wise evaluation for the Math and Portuguese datasets |
 
 The dashboard uses a navy-and-white visual theme with reusable metric cards, consistent page layouts, and responsive charts. It uses Plotly charts when available and Streamlit-native charts otherwise.
 
-## Experiment workflow
+## Demonstration workflow
 
-1. Upload a CSV dataset and select a prediction target.
-2. Choose classification or regression and configure the prediction scenario.
-3. Set the test split, cross-validation folds, random seed, and feature-selection options.
-4. Compare baseline models and optionally run Optuna hyperparameter optimization.
-5. Review cross-validation results and final held-out evaluation in separate dashboard views.
-6. Explore model explanations and save timestamped experiment artifacts.
+1. Launch the app and explore the bundled Math cohort; choose the Portuguese cohort in the sidebar or upload your own CSV.
+2. Open **Model Studio**, select the prediction target and early or grade-assisted scenario, then run an evaluation.
+3. Review cross-validation comparisons and held-out evaluation in their dedicated workspaces.
+4. Open **Student Predictions** to enter one student's profile or upload a batch using the downloadable feature template.
+5. Download prediction results and inspect model explanations when needed.
 
 The final held-out test partition is reserved for evaluation after model selection. Preprocessing, feature selection, and model fitting are performed within the training and cross-validation workflow.
+
+Dashboard pass rates and the support watchlist are based on observed historical `G3` values in the source cohort. They are descriptive summaries, not model predictions. Model scores are decision-support signals and should be reviewed by educators; they are not guaranteed to be calibrated probabilities.
 
 ## Early-classification experiment
 
@@ -91,7 +97,7 @@ From the project directory:
 python -m streamlit run app.py
 ```
 
-The dashboard opens in the browser with dataset upload and experiment controls.
+The dashboard opens in the browser with a bundled demonstration cohort. Upload a CSV from the sidebar to use your own data.
 
 ## Tests
 
@@ -106,4 +112,3 @@ Compile the application and source modules:
 ```powershell
 .\venv\Scripts\python.exe -m compileall -q app.py src
 ```
-

@@ -114,6 +114,26 @@ def test_baseline_comparison_uses_same_split_and_continues_after_failure():
     assert len(split.X_test) == 30
 
 
+def test_baseline_comparison_can_return_selected_fitted_pipeline():
+    X, y = classification_data(rows=120)
+    split = reproducible_split(X, y, "Classification", 0.25, 42)
+    result = build_baseline_comparison(
+        split.X_train,
+        split.y_train,
+        split.X_test,
+        split.y_test,
+        "Classification",
+        {"Dummy": DummyClassifier(strategy="most_frequent")},
+        folds=3,
+        seed=42,
+        return_selected_pipeline=True,
+    )
+
+    assert len(result) == 5
+    assert result[3] == "Dummy"
+    assert result[4].predict(split.X_test).shape == split.y_test.shape
+
+
 def test_identical_splits_across_model_comparisons():
     X, y = regression_data(rows=80)
     split = reproducible_split(X, y, "Regression", 0.2, 42)

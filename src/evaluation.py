@@ -158,7 +158,11 @@ def build_baseline_comparison(
     models: Mapping[str, object],
     folds: int,
     seed: int = 42,
-) -> tuple[pd.DataFrame, dict[str, object], dict[str, object], str]:
+    return_selected_pipeline: bool = False,
+) -> (
+    tuple[pd.DataFrame, dict[str, object], dict[str, object], str]
+    | tuple[pd.DataFrame, dict[str, object], dict[str, object], str, Pipeline]
+):
     """Compare baselines by training CV, then evaluate the winning pipeline once."""
     cv = make_cv(task, y_train, folds, seed)
     preprocessor = build_preprocessor(X_train)
@@ -224,6 +228,8 @@ def build_baseline_comparison(
         fitted[winner],
         X_test,
     )
+    if return_selected_pipeline:
+        return comparison, test_metrics, errors, str(winner), fitted[str(winner)]
     return comparison, test_metrics, errors, str(winner)
 
 

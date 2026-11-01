@@ -15,6 +15,8 @@ def test_app_starts_without_an_upload():
     app.run()
     assert not app.exception
     assert app.info
+    assert app.radio(key="student_automl_workspace").value == "Student Success Dashboard"
+    assert any(metric.label == "Students in cohort" for metric in app.metric)
 
 
 def test_app_runs_optuna_when_enabled(monkeypatch, tmp_path):
@@ -87,6 +89,55 @@ def test_app_runs_semicolon_upload_with_cross_validation():
     app.run()
     assert not app.exception
     assert any("Selected from training CV" in text.value for text in app.success)
+
+
+def test_student_predictions_score_batch_and_ignore_untrained_columns():
+    rows = ["G3;studytime;absences;school"]
+    for i in range(90):
+        grade = 12 if i % 2 else 8
+        rows.append(f"{grade};{i % 4 + 1};{i % 7};{'GP' if i % 3 else 'MS'}")
+
+    app = AppTest.from_file(str(APP_PATH), default_timeout=30)
+    app.run()
+    app.file_uploader[0].set_value(("students.csv", "\n".join(rows).encode(), "text/csv"))
+    app.run()
+    app.button[0].click()
+    app.run()
+    assert not app.exception
+
+    app.radio(key="student_automl_workspace").set_value("Student Predictions")
+    app.run()
+    single_student_button = next(
+        button for button in app.button if button.label == "Predict student outcome"
+    )
+    single_student_button.click()
+    app.run()
+    assert not app.exception
+    assert any(metric.label == "Predicted outcome" for metric in app.metric)
+
+    app.file_uploader(key="prediction_csv").set_value(
+        (
+            "new_students.csv",
+            b"studytime,absences,school,G3\n2,0,GP,18\n4,3,MS,7\n",
+            "text/csv",
+        )
+    )
+    app.run()
+    app.button(key="generate_predictions").click()
+    app.run()
+
+    assert not app.exception
+    assert any("Students scored" == metric.label for metric in app.metric)
+    assert any(
+        "Additional columns were ignored: G3" in element.value
+        for element in app.info
+    )
+    assert app.download_button(key="download_prediction_results")
+
+    app.radio(key="student_automl_workspace").set_value("Explainable AI")
+    app.run()
+    assert not app.exception
+    assert any("Global permutation importance" in item.value for item in app.subheader)
 
 
 def test_dashboard_does_not_retrain_for_another_run(monkeypatch):

@@ -34,6 +34,12 @@ def test_load_malformed_one_column_csv():
         load_csv(b"G3\n12\n8\n")
 
 
+def test_load_single_feature_prediction_csv():
+    df, delimiter = load_csv(b"school\nGP\nMS\n", minimum_columns=1)
+    assert delimiter == ","
+    assert df["school"].tolist() == ["GP", "MS"]
+
+
 def test_prepare_and_derive_pass_fail_target():
     df = pd.DataFrame({"G1": [15, 8], "G2": [14, 9], "G3": [13, 7]})
     X, y = prepare_target(df, "G3", "Classification", derive_pass_fail=True)

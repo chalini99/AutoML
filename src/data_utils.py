@@ -28,9 +28,11 @@ def _decode_csv(raw_bytes: bytes) -> tuple[str, str]:
 def detect_csv_delimiter(text: str) -> str:
     """Detect a delimiter while avoiding a single-column fallback."""
     sample = text[:50_000]
+    header = sample.splitlines()[0] if sample.splitlines() else ""
+    if header and not any(delimiter in header for delimiter in ",;\t|"):
+        return ","
     try:
         delimiter = csv.Sniffer().sniff(sample, delimiters=",;\t|").delimiter
-        header = sample.splitlines()[0]
         if delimiter in header:
             return delimiter
     except csv.Error:
@@ -49,7 +51,10 @@ def detect_csv_delimiter(text: str) -> str:
     )
 
 
-def load_csv(upload: BinaryIO | TextIO | bytes) -> tuple[pandas_dataframe, str]:
+def load_csv(
+    upload: BinaryIO | TextIO | bytes,
+    minimum_columns: int = 2,
+) -> tuple[pandas_dataframe, str]:
     """Read a CSV from a file object or bytes and report its delimiter."""
     if isinstance(upload, bytes):
         raw_bytes = upload
@@ -68,16 +73,23 @@ def load_csv(upload: BinaryIO | TextIO | bytes) -> tuple[pandas_dataframe, str]:
     except (pd.errors.ParserError, pd.errors.EmptyDataError) as exc:
         raise DatasetValidationError(f"The CSV could not be parsed: {exc}") from exc
 
-    validate_dataframe(df)
+    validate_dataframe(df, minimum_columns=minimum_columns)
     return df, delimiter
 
 
-def validate_dataframe(df: pd.DataFrame) -> None:
+def validate_dataframe(df: pd.DataFrame, minimum_columns: int = 2) -> None:
     if df.empty:
         raise DatasetValidationError("The dataset has no usable rows.")
-    if len(df.columns) < 2:
+    if minimum_columns < 1:
+        raise ValueError("minimum_columns must be at least one.")
+    if len(df.columns) < minimum_columns:
+        if minimum_columns == 2:
+            raise DatasetValidationError(
+                "The dataset has fewer than two columns. Confirm that the CSV delimiter is correct."
+            )
         raise DatasetValidationError(
-            "The dataset has fewer than two columns. Confirm that the CSV delimiter is correct."
+            f"The dataset has fewer than {minimum_columns} columns. "
+            "Confirm that the CSV delimiter is correct."
         )
     if df.shape[1] != len(set(df.columns)):
         raise DatasetValidationError("Column names must be unique.")
